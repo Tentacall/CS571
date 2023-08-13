@@ -41,31 +41,37 @@ class Grid:
 
     def top(self, mat: List[List[int]], x: int, y: int):
         matrix = copy.deepcopy(mat)
-        if x < 1 or x > GRID_SIZE or y < 0 or y > GRID_SIZE:
-            return None
+        if x < 1 or x >= GRID_SIZE or y < 0 or y >= GRID_SIZE:
+            return None, -1, -1
         matrix[x][y], matrix[x - 1][y] = matrix[x - 1][y], matrix[x][y]
-        return matrix
+        return matrix, x-1, y
 
     def bottom(self, mat: List[List[int]], x: int, y: int):
         matrix = copy.deepcopy(mat)
-        if x < 0 or x > GRID_SIZE - 1 or y < 0 or y > GRID_SIZE:
-            return None
+        if x < 0 or x >= GRID_SIZE - 1 or y < 0 or y >= GRID_SIZE:
+            return None, -1, -1
         matrix[x][y], matrix[x + 1][y] = matrix[x + 1][y], matrix[x][y]
-        return matrix
+        return matrix, x+1, y
 
     def right(self, mat: List[List[int]], x: int, y: int):
         matrix = copy.deepcopy(mat)
-        if x < 0 or x > GRID_SIZE + 1 or y < 0 or y > GRID_SIZE - 1:
-            return None
+        if x < 0 or x >= GRID_SIZE + 1 or y < 0 or y >= GRID_SIZE - 1:
+            return None, -1, -1
         matrix[x][y], matrix[x][y + 1] = matrix[x][y + 1], matrix[x][y]
-        return matrix
+        return matrix, x, y+1
 
     def left(self, mat: List[List[int]], x: int, y: int):
         matrix = copy.deepcopy(mat)
-        if x < 0 or x > GRID_SIZE + 1 or y < 1 or y > GRID_SIZE:
-            return None
+        if x < 0 or x >= GRID_SIZE + 1 or y < 1 or y >= GRID_SIZE:
+            return None, -1, -1
         matrix[x][y], matrix[x][y - 1] = matrix[x][y - 1], matrix[x][y]
-        return matrix
+        return matrix, x, y - 1
+
+    def position(self, matrix: List[List[int]]) -> (int, int):
+        for i in range(GRID_SIZE):
+            for j in range(GRID_SIZE):
+                if matrix[i][j] == 'B':
+                    return (i, j)
 
 
 if __name__ == '__main__':
