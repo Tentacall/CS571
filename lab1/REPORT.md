@@ -92,7 +92,7 @@ BFS: 12
 - DFS was better in 80% of the cases than BFS
 
 ### 3.
-- By running both BFS and DFS 1000 times, 47 times a path was found
+- By running both BFS and DFS 100 times, 47 times a path was found
 - DFS was better in 74% of the cases than BFS
 
 ## Intuition and Conclusion
