@@ -1,4 +1,5 @@
 from typing import List
+import copy
 import random
 GRID_SIZE = 3
 
@@ -19,15 +20,59 @@ class Grid:
         return matrix
 
     def display(self, matrix: List[List[int]]) -> None:
+        if matrix is None:
+            print("None")
+            return
         for row in matrix:
             for v in row:
                 print(f"{v} ", end="")
             print()
+        print("------")
 
     def target(self) -> List[List[int]]:
         return [[1, 2, 3], [4, 5, 6], [7, 8, 'B']]
 
+    def flatten(self, matrix: List[List[int]]) -> str:
+        res = ""
+        for row in matrix:
+            for v in row:
+                res += str(v)
+        return res
+
+    def top(self, mat: List[List[int]], x: int, y: int):
+        matrix = copy.deepcopy(mat)
+        if x < 1 or x > GRID_SIZE or y < 0 or y > GRID_SIZE:
+            return None
+        matrix[x][y], matrix[x - 1][y] = matrix[x - 1][y], matrix[x][y]
+        return matrix
+
+    def bottom(self, mat: List[List[int]], x: int, y: int):
+        matrix = copy.deepcopy(mat)
+        if x < 0 or x > GRID_SIZE - 1 or y < 0 or y > GRID_SIZE:
+            return None
+        matrix[x][y], matrix[x + 1][y] = matrix[x + 1][y], matrix[x][y]
+        return matrix
+
+    def right(self, mat: List[List[int]], x: int, y: int):
+        matrix = copy.deepcopy(mat)
+        if x < 0 or x > GRID_SIZE + 1 or y < 0 or y > GRID_SIZE - 1:
+            return None
+        matrix[x][y], matrix[x][y + 1] = matrix[x][y + 1], matrix[x][y]
+        return matrix
+
+    def left(self, mat: List[List[int]], x: int, y: int):
+        matrix = copy.deepcopy(mat)
+        if x < 0 or x > GRID_SIZE + 1 or y < 1 or y > GRID_SIZE:
+            return None
+        matrix[x][y], matrix[x][y - 1] = matrix[x][y - 1], matrix[x][y]
+        return matrix
+
 
 if __name__ == '__main__':
     g = Grid()
-    g.display(g.target())
+    matrix = g.target()
+    g.display(matrix)
+    g.display(g.top(matrix, 1, 1))
+    g.display(g.bottom(matrix, 1, 1))
+    g.display(g.right(matrix, 1, 1))
+    g.display(g.left(matrix, 1, 1))
