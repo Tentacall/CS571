@@ -13,7 +13,9 @@ if __name__ == '__main__':
 - In case of single pass, run the `.run()` funtion
 - For benchmarking run the `.benchmark(epoch)` function
 
-### Benchmarking on 20 testcase
+### Benchmarking
+
+#### 20 testcases
 ```
 Benchmarking...
 [■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■] 100%Epoch 1 completed
@@ -69,6 +71,44 @@ DFS: 8
 BFS: 2
 ``` 
 
+#### 100 testcases
+```
+Average
+DFS     BFS
+126476.13       143867.44
+
+----SCORES-----
+DFS: 35
+BFS: 12
+```
+
 ## Observation
-- From Benchmark we can say DFS in better in avarage
+
+### 1.
+- From Benchmark we can say DFS in better in average than BFS in this case
+
+### 2.
+- By running both BFS and DFS 20 times, 10 times a path was found
+- DFS was better in 80% of the cases than BFS
+
+### 3.
+- By running both BFS and DFS 1000 times, 47 times a path was found
+- DFS was better in 74% of the cases than BFS
+
+## Intuition and Conclusion
+
+### 1.
 - Also there are 2 distinct set of states and they are disjoint
+- One disjoint set is probably the mirror image of other
+- So if there are 9! = 362880 cases, then one disjoint set will have 9!/2 = 181440 nodes
+- One can not go from node in one disjoint set to node in another disjoint set
+- Hence, if target is fixed and node is random, then probability of finding a path is 50%
+
+### 2.
+- Here, the graph will have more of a web-like structure than a tree-like structure
+- Hence DFS is better at times than BFS
+- BFS can be more effective in a tree-like structure
+
+### 3.
+- Order of traversing the node (ie moving the blank 'B' up, down, left or right) can effect the output of DFS more drastically than in BFS
+- The 'luck' factor can make DFS drastically faster and slower, whereas, BFS performs average every time
