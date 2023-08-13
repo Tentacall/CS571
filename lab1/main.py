@@ -63,6 +63,9 @@ class Solution:
         print("\nInitial matrix: ")
         self.g.display(self.matrix)
 
+        print("\nTarget matrix: ")
+        self.g.display(self.g.target())
+        
         print("Running DFS: ")
         self.search(self.matrix, self.posx, self.posy,  "DFS")
         print(f"\nTotal steps visited: {self.dfs_step_count}")
