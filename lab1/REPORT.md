@@ -1,6 +1,6 @@
 ## LAB: 1
 #### Team
-- Sanskriti Singh [ 2001CS61 ]
+- Sanskriti Singh [ 2001CS60 ]
 - Rupak Biswas [ 2001CS57 ]
 ---
 ### How to run ?
