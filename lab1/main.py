@@ -18,45 +18,52 @@ class Solution:
         self.target = self.g.flatten(self.g.target())
         self.matrix = self.g.generate()
         self.posx, self.posy = self.g.position(self.matrix)
+
         self.bfs_visited = {}
         self.bfs_queue = queue.Queue()
         self.bfs_result_found = False
         self.bfs_step_count = 0
 
-    def dfs(self):
-        pass
+        self.dfs_visited = {}
+        self.dfs_queue = queue.LifoQueue()
+        self.dfs_result_found = False
+        self.dfs_step_count = 0
 
-    def bfs(self, matrix, x, y):
-        self.bfs_queue.put((matrix, self.posx, self.posy))
-        while not self.bfs_queue.empty() and not self.bfs_result_found:
-            mat, x, y = self.bfs_queue.get()
+    def search(self, matrix, x, y, visited ,queue, result_found, step_count ):
+        queue.put((matrix, x, y))
+        while not queue.empty() and not result_found:
+            mat, x, y = queue.get()
             flat = self.g.flatten(mat)
-            if flat in self.bfs_visited:
+            if flat in visited:
                 continue
 
-            self.bfs_step_count += 1
-            self.bfs_visited[flat] = True
+            step_count += 1
+            visited[flat] = True
 
             if flat == self.target:
-                self.bfs_result_found = True
+                result_found = True
                 break
 
             operations = [self.g.top, self.g.bottom, self.g.right, self.g.left]
             for op in operations:
                 mat2, x2, y2 = op(mat, x, y)
                 if mat2 is not None:
-                    self.bfs_queue.put((mat2, x2, y2))
-            loading(self.bfs_step_count, MAX_POSSIBLE_STEP)
+                    queue.put((mat2, x2, y2))
+            loading(step_count, MAX_POSSIBLE_STEP)
 
-        print(f"\nTotal steps visited: {self.bfs_step_count}")
-        print(f"Solution Possible: {self.bfs_result_found}")
+        print(f"\nTotal steps visited: {step_count}")
+        print(f"Solution Possible: {result_found}")
 
+    def run(self):
+        print("\nInitial matrix: ")
+        self.g.display(self.matrix)
+
+        print("Running DFS: ")
+        self.search(self.matrix, self.posx, self.posy, self.dfs_visited, self.dfs_queue, self.dfs_result_found, self.dfs_step_count)
+
+        print("Running BFS: ")
+        self.search(self.matrix, self.posx, self.posy, self.bfs_visited, self.bfs_queue, self.bfs_result_found, self.bfs_step_count)
 
 if __name__ == '__main__':
     sol = Solution()
-    print("\nInitial matrix: ")
-    sol.g.display(sol.matrix)
-    # sol.matrix = [[7, 4, 1], [8, 5, 2], ['B', 6, 3]]
-    # sol.posx, sol.posy = 2, 0
-    print("Running BFS: ")
-    sol.bfs(sol.matrix, sol.posx, sol.posy)
+    sol.run()
