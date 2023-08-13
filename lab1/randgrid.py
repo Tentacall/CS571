@@ -66,6 +66,13 @@ class Grid:
             return None
         matrix[x][y], matrix[x][y - 1] = matrix[x][y - 1], matrix[x][y]
         return matrix
+    
+    def find_blank(self, matrix: List[List[int]]) -> (int, int):
+        for i in range(GRID_SIZE):
+            for j in range(GRID_SIZE):
+                if matrix[i][j] == 'B':
+                    return (i, j)
+        return (-1, -1)
 
 
 if __name__ == '__main__':
