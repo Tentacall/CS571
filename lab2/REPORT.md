@@ -49,3 +49,22 @@ h2: 0
 h3: 12
 h4: 0
 h5: 0
+
+Q5.
+We take a random matrix `[[2,1,8],[3, 'B', 7],[6,5,4]]` to perform this oparetion 
+- Hurestic 3
+    - total visited = 446 and total step to optimal one = 22
+    - lets take some random positions among all visited node
+    - lets take 2 random state
+        - f(n) = 25, g(n) = 19, h(n) = 6
+        - f(m) = 24, gn(m) = 8, h(m) = 16
+        - cost(n,m) = 11
+        so, 6 <= 11 + 16 ( verified )
+- Hurestic 2
+    - total visited = 9529 and total step to optimal one = 22
+    - lets take 2 random state
+        - f(n) = 23, g(n) = 19, h(n) = 4
+        - f(m) = 22, gn(m) = 13, h(m) = 9
+        - cost(n,m) = 6
+        so, 4 <= 6 + 9 ( verified )
+- refer to line 35 of `main.py`
