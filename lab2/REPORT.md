@@ -18,16 +18,16 @@ if __name__ == '__main__':
 - In a general search algorithm, each state (n) maintains a function f(n) = g(n) + h(n) where g(n) is the least cost from the source state to state n found so far and h(n) is the estimated cost of the optimal path from state n to the goal state.
 - Implement a search algorithm for solving the 8-puzzle problem with the
 following assumptions.
--  - a. g(n) least cost from source state to current state so far.
--  - b. Heuristics
-- - - i. h1(n) = 0.
-- - - ii. h2(n) = number of tiles displaced from their destined position.
-- - - iii. h3(n) = sum of the Manhattan distance of each tile from the goal position.
-- - - iv. h4(n) = Devise a heuristics such that h(n) > h∗ (n)
+    - a. g(n) least cost from source state to current state so far.
+    - b. Heuristics
+        - i. h1(n) = 0.
+        - ii. h2(n) = number of tiles displaced from their destined position.
+        - iii. h3(n) = sum of the Manhattan distance of each tile from the goal position.
+        - iv. h4(n) = Devise a heuristics such that h(n) > h∗ (n)
 
 - We took h4 and h5 as:
-- - h4(n) = sum of the Chessboard distance of each tile from the goal position.
-- - h5(n) = sum of the Euclidian distance of each tile from the goal position.
+    - h4(n) = sum of the Chessboard distance of each tile from the goal position.
+    - h5(n) = sum of the Euclidian distance of each tile from the goal position.
 
 ### Experiments and Benchmarking
 
@@ -84,27 +84,6 @@ h2: 0
 h3: 12
 h4: 0
 h5: 0
-<<<<<<< Updated upstream
-
-Q5.
-We take a random matrix `[[2,1,8],[3, 'B', 7],[6,5,4]]` to perform this oparetion 
-- Hurestic 3
-    - total visited = 446 and total step to optimal one = 22
-    - lets take some random positions among all visited node
-    - lets take 2 random state
-        - f(n) = 25, g(n) = 19, h(n) = 6
-        - f(m) = 24, gn(m) = 8, h(m) = 16
-        - cost(n,m) = 11
-        so, 6 <= 11 + 16 ( verified )
-- Hurestic 2
-    - total visited = 9529 and total step to optimal one = 22
-    - lets take 2 random state
-        - f(n) = 23, g(n) = 19, h(n) = 4
-        - f(m) = 22, gn(m) = 13, h(m) = 9
-        - cost(n,m) = 6
-        so, 4 <= 6 + 9 ( verified )
-- refer to line 35 of `main.py`
-=======
 ```
 
 ## 1 Observe and verify that better heuristics expands lesser states.
@@ -130,7 +109,32 @@ We take a random matrix `[[2,1,8],[3, 'B', 7],[6,5,4]]` to perform this oparetio
 ## 5 Observe and verify whether the monotone restriction is followed for the following two Heuristics:
 ### a Monotone restriction: h(n) <= cost(n,m) + h(m)
 ### i h2(n) = number of tiles displaced from their destined position.
+
+We take a random matrix `[[2,1,8],[3, 'B', 7],[6,5,4]]` to perform this operation 
+
+- Hurestic 2
+    - total visited = 9529 and total step to optimal one = 22
+    - lets take 2 random state
+        - f(n) = 23, g(n) = 19, h(n) = 4
+        - f(m) = 22, gn(m) = 13, h(m) = 9
+        - cost(n,m) = 6
+        so, 4 <= 6 + 9 ( verified )
+- refer to line 35 of `main.py`
 ### ii h3(n) = sum of the Manhattan distance of each tile from the goal position.
 
+- Hurestic 3
+    - total visited = 446 and total step to optimal one = 22
+    - lets take some random positions among all visited node
+    - lets take 2 random state
+        - f(n) = 25, g(n) = 19, h(n) = 6
+        - f(m) = 24, gn(m) = 8, h(m) = 16
+        - cost(n,m) = 11
+        so, 6 <= 11 + 16 ( verified )
+
 ## 6 Observe and verify that if the cost of the empty tile is added (considering the empty tile as another tile) then monotonicity will be violated
->>>>>>> Stashed changes
+
+- yes, cost of the empty tile is added is being violated
+
+## 7 Compare and contrast the results of all four heuristics, h1(n), h2(n), h3(n), and h4(n), and state the reasons in a document file ‘Why one heuristic is better than the other one?’. While explaining, please comment on the optimality, time complexity, etc.
+
+- According to the observation: h3 > h5 > h4 > h3 > h2 > h1 
