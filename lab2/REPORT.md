@@ -1,3 +1,38 @@
+## LAB: 2
+#### Team
+- Sanskriti Singh [ 2001CS60 ]
+- Rupak Biswas [ 2001CS57 ]
+---
+### How to run ?
+```
+if __name__ == '__main__':
+    sol = Solution()
+    sol.benchmark(20)
+    # sol.run()
+```
+- In case of single pass, run the `.run()` funtion
+- For benchmarking run the `.benchmark(epoch)` function
+
+### Problem Statement
+
+- In a general search algorithm, each state (n) maintains a function f(n) = g(n) + h(n) where g(n) is the least cost from the source state to state n found so far and h(n) is the estimated cost of the optimal path from state n to the goal state.
+- Implement a search algorithm for solving the 8-puzzle problem with the
+following assumptions.
+    - a. g(n) least cost from source state to current state so far.
+    - b. Heuristics
+        - i. h1(n) = 0.
+        - ii. h2(n) = number of tiles displaced from their destined position.
+        - iii. h3(n) = sum of the Manhattan distance of each tile from the goal position.
+        - iv. h4(n) = Devise a heuristics such that h(n) > h∗ (n)
+
+- We took h4 and h5 as:
+    - h4(n) = sum of the Chessboard distance of each tile from the goal position.
+    - h5(n) = sum of the Euclidian distance of each tile from the goal position.
+
+### Experiments and Benchmarking
+
+#### 20 testcases
+```
 Benchmarking...
 [                                        ] 2%Round 1 completed
 [                                        ] 0%Round 2 completed
@@ -49,28 +84,43 @@ h2: 0
 h3: 12
 h4: 0
 h5: 0
-
-Q2.
-```python
-def verify_q2(self):
-        visited_states = [None, None, None, None, None]
-        hurestics = [self.h1, self.h2, self.h3, self.h4, self.h5]
-        for i in range(5):
-            visited_states[i] =  self.search(self.matrix, self.posx, self.posy, hurestics[i] )
-
-        for key in visited_states[3]:
-            if key not in visited_states[4]:
-                print("h4 is not admissible")
-                break
-            if key not in visited_states[2]:
-                print("h3 is not admissible")
-                break
-
-            if key not in visited_states[1]:
-                print("h2 is not admissible")
-                break
-        print("All hurestics are admissible")
 ```
+
+## 1 Observe and verify that better heuristics expands lesser states.
+
+- According to the observation: h3 > h5 > h4 > h3 > h2 > h1 
+
+## 2 Observe and verify that all the states expanded by better heuristics should also be expanded by inferior heuristics.
+
+- Yes, all states expanded by better heuristics was expanded by also expanded by inferior heuristics
+
+## 3 Observe and verify monotone restrictions on the heuristics.
+
+- Monotone restrictions was followed by h1, h2, and h3
+
+## 4 Observe un-reachability and provide proof.
+
+- Also there are 2 distinct set of states and they are disjoint
+- One disjoint set is probably the mirror image of other
+- So if there are 9! = 362880 cases, then one disjoint set will have 9!/2 = 181440 nodes
+- One can not go from node in one disjoint set to node in another disjoint set
+- Hence, if target is fixed and node is random, then probability of finding a path is 50%
+
+## 5 Observe and verify whether the monotone restriction is followed for the following two Heuristics:
+### a Monotone restriction: h(n) <= cost(n,m) + h(m)
+### i h2(n) = number of tiles displaced from their destined position.
+
+We take a random matrix `[[2,1,8],[3, 'B', 7],[6,5,4]]` to perform this operation 
+
+- Hurestic 2
+    - total visited = 9529 and total step to optimal one = 22
+    - lets take 2 random state
+        - f(n) = 23, g(n) = 19, h(n) = 4
+        - f(m) = 22, gn(m) = 13, h(m) = 9
+        - cost(n,m) = 6
+        so, 4 <= 6 + 9 ( verified )
+- refer to line 35 of `main.py`
+### ii h3(n) = sum of the Manhattan distance of each tile from the goal position.
 
 Q5.
 We take a random matrix `[[2,1,8],[3, 'B', 7],[6,5,4]]` to perform this oparetion 
@@ -82,11 +132,11 @@ We take a random matrix `[[2,1,8],[3, 'B', 7],[6,5,4]]` to perform this oparetio
         - f(m) = 24, gn(m) = 8, h(m) = 16
         - cost(n,m) = 11
         so, 6 <= 11 + 16 ( verified )
-- Hurestic 2
-    - total visited = 9529 and total step to optimal one = 22
-    - lets take 2 random state
-        - f(n) = 23, g(n) = 19, h(n) = 4
-        - f(m) = 22, gn(m) = 13, h(m) = 9
-        - cost(n,m) = 6
-        so, 4 <= 6 + 9 ( verified )
-- refer to line 35 of `main.py`
+
+## 6 Observe and verify that if the cost of the empty tile is added (considering the empty tile as another tile) then monotonicity will be violated
+
+- yes, cost of the empty tile is added is being violated
+
+## 7 Compare and contrast the results of all four heuristics, h1(n), h2(n), h3(n), and h4(n), and state the reasons in a document file ‘Why one heuristic is better than the other one?’. While explaining, please comment on the optimality, time complexity, etc.
+
+- According to the observation: h3 > h5 > h4 > h3 > h2 > h1 
