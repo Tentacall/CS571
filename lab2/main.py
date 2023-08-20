@@ -139,35 +139,41 @@ class Solution:
 
     def benchmark(self, epoch):
         print("Benchmarking...")
-        result = []
-        score = [0,0]
+        score = [0,0,0,0,0]
+        result = [[], [], [], [], []]
         for i in range(epoch):
             self.matrix = self.g.generate()
             self.posx, self.posy = self.g.position(self.matrix)
+            round_max = 999999999 
+            round_index = -1
 
-            self.search(self.matrix, self.posx, self.posy, "DFS")
-            self.search(self.matrix, self.posx, self.posy, "BFS")
-            result.append([self.dfs_step_count, self.bfs_step_count, self.dfs_result_found])
-            if self.dfs_step_count < self.bfs_step_count: score[0] += 1
-            if self.dfs_step_count > self.bfs_step_count: score[1] += 1
-            print(f"Epoch {i+1} completed")
+            hurestics = [self.h1, self.h2, self.h3, self.h4, self.h5]
+            for j in range(5):
+                self.search(self.matrix, self.posx, self.posy, hurestics[j])
+                result[j].append(self.step_count)
+                if self.step_count == 181440 :
+                    for p in range(1, 5):
+                        result[p].append(181440)
+                    break
+                if self.step_count < round_max:
+                    round_max = self.step_count
+                    round_index = j
+            if round_max < 181440:
+                score[round_index] += 1
+            print(f"Round {i+1} completed")
         
         print(f"\n----RESULTS----[{epoch} epochs]")
-        print("DFS\tBFS\tresult\tdeviation")
+        print("round\th1\th2\th3\th4\th5")
         for i in range(epoch):
-            print(f"{result[i][0]}\t{result[i][1]}\t{result[i][2]}\t{result[i][0] - result[i][1]}")
-        
-        print("--------------")
-        print("Average\nDFS\tBFS")
-        print(f"{sum([x[0] for x in result]) / epoch}\t{sum([x[1] for x in result]) / epoch}")
+            print(f"{i}\t{result[0][i]}\t{result[1][i]}\t{result[2][i]}\t{result[3][i]}\t{result[4][i]}")
 
         print("\n----SCORES-----")
-        print(f"DFS: {score[0]}\nBFS: {score[1]}")
+        print(f"h1: {score[0]}\nh2: {score[1]}\nh3: {score[2]}\nh4: {score[3]}\nh5: {score[4]}")
 
 
 if __name__ == '__main__':
     sol = Solution()
-    # sol.benchmark(20)
-    sol.matrix = [[2,1,8],[3, 'B', 7],[6,5,4]]
-    sol.posx, sol.posy = 1, 1
-    sol.run()
+    sol.benchmark(5)
+    # sol.matrix = [[2,1,8],[3, 'B', 7],[6,5,4]]
+    # sol.posx, sol.posy = 1, 1
+    # sol.run()
