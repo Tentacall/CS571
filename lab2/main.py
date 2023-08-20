@@ -53,6 +53,7 @@ class Solution:
                     queue.put((fn ,gn + 1, x2, y2, mat2) )
             # loading(step_count, MAX_POSSIBLE_STEP)
         self.result_found, self.step_count = result_found, step_count
+        return visited
 
     def run(self, heurestic):
         print("\nInitial matrix: ")
@@ -178,10 +179,29 @@ class Solution:
         print("\n----SCORES-----")
         print(f"h1: {score[0]}\nh2: {score[1]}\nh3: {score[2]}\nh4: {score[3]}\nh5: {score[4]}")
 
+    def verify_q2(self):
+        visited_states = [None, None, None, None, None]
+        hurestics = [self.h1, self.h2, self.h3, self.h4, self.h5]
+        for i in range(5):
+            visited_states[i] =  self.search(self.matrix, self.posx, self.posy, hurestics[i] )
+
+        for key in visited_states[3]:
+            if key not in visited_states[4]:
+                print("h4 is not admissible")
+                break
+            if key not in visited_states[2]:
+                print("h3 is not admissible")
+                break
+
+            if key not in visited_states[1]:
+                print("h2 is not admissible")
+                break
+        print("All hurestics are admissible")
 
 if __name__ == '__main__':
     sol = Solution()
     # sol.benchmark(20)
     sol.matrix = [[2,1,8],[3, 'B', 7],[6,5,4]]
     sol.posx, sol.posy = 1, 1
-    sol.run(sol.h2)
+    # sol.run(sol.h2)
+    sol.verify_q2()

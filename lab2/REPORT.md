@@ -50,6 +50,28 @@ h3: 12
 h4: 0
 h5: 0
 
+Q2.
+```python
+def verify_q2(self):
+        visited_states = [None, None, None, None, None]
+        hurestics = [self.h1, self.h2, self.h3, self.h4, self.h5]
+        for i in range(5):
+            visited_states[i] =  self.search(self.matrix, self.posx, self.posy, hurestics[i] )
+
+        for key in visited_states[3]:
+            if key not in visited_states[4]:
+                print("h4 is not admissible")
+                break
+            if key not in visited_states[2]:
+                print("h3 is not admissible")
+                break
+
+            if key not in visited_states[1]:
+                print("h2 is not admissible")
+                break
+        print("All hurestics are admissible")
+```
+
 Q5.
 We take a random matrix `[[2,1,8],[3, 'B', 7],[6,5,4]]` to perform this oparetion 
 - Hurestic 3
