@@ -1,3 +1,38 @@
+## LAB: 2
+#### Team
+- Sanskriti Singh [ 2001CS60 ]
+- Rupak Biswas [ 2001CS57 ]
+---
+### How to run ?
+```
+if __name__ == '__main__':
+    sol = Solution()
+    sol.benchmark(20)
+    # sol.run()
+```
+- In case of single pass, run the `.run()` funtion
+- For benchmarking run the `.benchmark(epoch)` function
+
+### Problem Statement
+
+- In a general search algorithm, each state (n) maintains a function f(n) = g(n) + h(n) where g(n) is the least cost from the source state to state n found so far and h(n) is the estimated cost of the optimal path from state n to the goal state.
+- Implement a search algorithm for solving the 8-puzzle problem with the
+following assumptions.
+-  - a. g(n) least cost from source state to current state so far.
+-  - b. Heuristics
+- - - i. h1(n) = 0.
+- - - ii. h2(n) = number of tiles displaced from their destined position.
+- - - iii. h3(n) = sum of the Manhattan distance of each tile from the goal position.
+- - - iv. h4(n) = Devise a heuristics such that h(n) > h∗ (n)
+
+- We took h4 and h5 as:
+- - h4(n) = sum of the Chessboard distance of each tile from the goal position.
+- - h5(n) = sum of the Euclidian distance of each tile from the goal position.
+
+### Experiments and Benchmarking
+
+#### 20 testcases
+```
 Benchmarking...
 [                                        ] 2%Round 1 completed
 [                                        ] 0%Round 2 completed
@@ -49,6 +84,7 @@ h2: 0
 h3: 12
 h4: 0
 h5: 0
+<<<<<<< Updated upstream
 
 Q5.
 We take a random matrix `[[2,1,8],[3, 'B', 7],[6,5,4]]` to perform this oparetion 
@@ -68,3 +104,33 @@ We take a random matrix `[[2,1,8],[3, 'B', 7],[6,5,4]]` to perform this oparetio
         - cost(n,m) = 6
         so, 4 <= 6 + 9 ( verified )
 - refer to line 35 of `main.py`
+=======
+```
+
+## 1 Observe and verify that better heuristics expands lesser states.
+
+- According to the observation: h3 > h5 > h4 > h3 > h2 > h1 
+
+## 2 Observe and verify that all the states expanded by better heuristics should also be expanded by inferior heuristics.
+
+- Yes, all states expanded by better heuristics was expanded by also expanded by inferior heuristics
+
+## 3 Observe and verify monotone restrictions on the heuristics.
+
+- Monotone restrictions was followed by h1, h2, and h3
+
+## 4 Observe un-reachability and provide proof.
+
+- Also there are 2 distinct set of states and they are disjoint
+- One disjoint set is probably the mirror image of other
+- So if there are 9! = 362880 cases, then one disjoint set will have 9!/2 = 181440 nodes
+- One can not go from node in one disjoint set to node in another disjoint set
+- Hence, if target is fixed and node is random, then probability of finding a path is 50%
+
+## 5 Observe and verify whether the monotone restriction is followed for the following two Heuristics:
+### a Monotone restriction: h(n) <= cost(n,m) + h(m)
+### i h2(n) = number of tiles displaced from their destined position.
+### ii h3(n) = sum of the Manhattan distance of each tile from the goal position.
+
+## 6 Observe and verify that if the cost of the empty tile is added (considering the empty tile as another tile) then monotonicity will be violated
+>>>>>>> Stashed changes
