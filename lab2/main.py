@@ -58,7 +58,7 @@ class Solution:
         self.g.display(self.g.target())
         
         print("Running A*: ")
-        self.search(self.matrix, self.posx, self.posy, self.h3 )
+        self.search(self.matrix, self.posx, self.posy, self.h5 )
         print(f"\nTotal steps visited: {self.step_count}")
         print(f"Solution Possible: {self.result_found}")
 
@@ -91,6 +91,48 @@ class Solution:
 
         for key in dict:
             count += abs(dict[key][0]-dict[key][2]) + abs(dict[key][1]-dict[key][3])
+
+        return count
+    
+    def h4(self, mat1, mat2):
+        dict = {}
+        count = 0
+        for i in range(3):
+            for j in range(3):
+                if mat1[i][j] not in dict:
+                    dict[mat1[i][j]] = [i, j]
+                else: 
+                    dict[mat1[i][j]].append(i)
+                    dict[mat1[i][j]].append(j)
+                if mat2[i][j] not in dict:
+                    dict[mat2[i][j]] = [i, j]
+                else: 
+                    dict[mat2[i][j]].append(i)
+                    dict[mat2[i][j]].append(j)
+
+        for key in dict:
+            count += max(abs(dict[key][0]-dict[key][2]) , abs(dict[key][1]-dict[key][3]))
+
+        return count
+    
+    def h5(self, mat1, mat2):
+        dict = {}
+        count = 0
+        for i in range(3):
+            for j in range(3):
+                if mat1[i][j] not in dict:
+                    dict[mat1[i][j]] = [i, j]
+                else: 
+                    dict[mat1[i][j]].append(i)
+                    dict[mat1[i][j]].append(j)
+                if mat2[i][j] not in dict:
+                    dict[mat2[i][j]] = [i, j]
+                else: 
+                    dict[mat2[i][j]].append(i)
+                    dict[mat2[i][j]].append(j)
+
+        for key in dict:
+            count += (abs(dict[key][0]-dict[key][2])**2 + abs(dict[key][1]-dict[key][3])**2)**(1/2)
 
         return count
                 
