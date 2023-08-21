@@ -24,10 +24,13 @@ class Solution:
         self.gval = {}
         self.optimal_path_distance = 0
 
-    def search(self, matrix, x, y , hurestic ):
-        result_found, step_count = False, 0
-        queue = PriorityQueue() # open list
-        visited = {} # closed list
+    def search(self, matrix, x, y , hurestic , depth = -1, visited = None, queue = None):
+        result_found = False
+        if depth == -1 :
+            self.step_count = 0
+            queue = PriorityQueue() # open list
+            visited = {} # closed list
+        next_queue = PriorityQueue()
         # initialize
         queue.put((0, 0, x, y, matrix))
         while not queue.empty() and not result_found:
@@ -37,7 +40,7 @@ class Solution:
             if flat in visited:
                 continue
 
-            step_count += 1
+            self.step_count += 1
             visited[flat] = True
 
             if flat == self.target:
@@ -48,12 +51,18 @@ class Solution:
             operations = [self.g.top, self.g.bottom, self.g.right, self.g.left]
             for op in operations:
                 mat2, x2, y2 = op(mat, x, y)
-                if mat2 is not None:
+                if mat2 is not None and ( depth == -1 or gn <= depth ):
                     fn = int(gn + 1 + hurestic(mat2,  self.target_mat ))
+                    if gn <= depth:
+                        fn = int( hurestic(mat2,  self.target_mat ))
                     queue.put((fn ,gn + 1, x2, y2, mat2) )
-            loading(step_count, MAX_POSSIBLE_STEP)
-        self.result_found, self.step_count = result_found, step_count
-        return visited
+                elif gn > depth and mat2 is not None:
+                    fn = int( hurestic(mat2,  self.target_mat ))
+                    next_queue.put((fn ,gn + 1, x2, y2, mat2) )
+
+            loading(self.step_count, MAX_POSSIBLE_STEP)
+        self.result_found = result_found
+        return visited, next_queue
 
 
     def run(self):
@@ -65,16 +74,35 @@ class Solution:
         
         print("Running Uniform Cost Search: ")
         start = time.time()
-        self.search(self.matrix, self.posx, self.posy, self.h1 )
+        self.search(self.matrix, self.posx, self.posy, self.h0 )
         delta = time.time() -start
         print(f"\nTotal steps visited: {self.step_count}")
         print(f"Solution Possible: {self.result_found}")
         print(f"Optimal Solution Distance: {self.optimal_path_distance}")
         print(f"Time taken: {delta:06f} seconds")
 
-    def h1(self, mat1, mat2):
+        print("Running IDDFS Search: ")
+        start = time.time()
+        visited = {}
+        queue = PriorityQueue()
+        self.step_count = 0
+        for depth in range(1000):
+            print("Depth : ", depth)
+            visited, queue = self.search(self.matrix, self.posx, self.posy, self.h1, depth, visited, queue )
+            if self.result_found:
+                break
+        delta = time.time() -start
+        print(f"\nTotal steps visited: {self.step_count}")
+        print(f"Solution Possible: {self.result_found}")
+        print(f"Optimal Solution Distance: {self.optimal_path_distance}")
+        print(f"Time taken: {delta:06f} seconds")
+
+    def h0(self, mat1, mat2):
         # uniform cost search
         return 0
+    
+    def h1(self, mat1, mat2):
+        return 181440 - self.step_count
     
 
 
