@@ -23,9 +23,6 @@ class IDS:
 
         self.bfs_result_found = False
         self.bfs_step_count = 0
-
-        self.dfs_result_found = False
-        self.dfs_step_count = 0
         
         self.visited = {}
         
@@ -58,7 +55,9 @@ class IDS:
             for op in operations:
                 mat2, x2, y2 = op(mat, x, y)
                 if mat2 is not None:
-                    queue.put((mat2, x2, y2, l+1))
+                    flat = self.g.flatten(mat2)
+                    if flat not in self.visited:
+                        queue.put((mat2, x2, y2, l+1))
                     
             l += 1
             loading(step_count, MAX_POSSIBLE_STEP)
@@ -86,7 +85,9 @@ class IDS:
             for op in operations:
                 mat2, x2, y2 = op(mat, x, y)
                 if mat2 is not None and (l-1)<=0:
-                    queue.put((mat2, x2, y2, l-1))
+                    flat = self.g.flatten(mat2)
+                    if flat not in self.visited:
+                        queue.put((mat2, x2, y2, l-1))
             loading(step_count, MAX_POSSIBLE_STEP)
 
         
