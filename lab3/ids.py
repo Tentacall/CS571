@@ -21,61 +21,33 @@ class IDS:
         self.matrix = self.g.generate()
         self.posx, self.posy = self.g.position(self.matrix)
 
-        self.bfs_result_found = False
-        self.bfs_step_count = 0
+        self.ids_result_found = False
+        self.ids_step_count = 0
+        self.total_step_count = 0
         
-        self.visited = {}
         
-    def bfs(self, matrix, x, y):
-        result_found, step_count = False, 0
-        queue = Queue()
-        limit = 0
-
-        queue.put((matrix, x, y, limit))
-        while not queue.empty() and not result_found:
-            mat, x, y, l = queue.get()
-            flat = self.g.flatten(mat)
-            if flat in self.visited:
-                continue
-
-            # step_count += 1
-            # self.visited[flat] = True
-
-            # if flat == self.target:
-            #     result_found = True
-            #     break
-            
-            result_found, count = self.dfs(mat, x, y, l)
-            step_count += count
-            
-            if result_found:
+    def search(self, matrix, x, y):
+        
+        for limit in range(MAX_DEPTH):
+            self.ids_result_found, self.ids_step_count = self.dfs(matrix, x, y, limit)
+            self.total_step_count += self.ids_step_count
+            print(f"\nDepth: {limit}")
+            if(self.ids_result_found):
                 break
-
-            operations = [self.g.top, self.g.bottom, self.g.right, self.g.left]
-            for op in operations:
-                mat2, x2, y2 = op(mat, x, y)
-                if mat2 is not None:
-                    flat = self.g.flatten(mat2)
-                    if flat not in self.visited:
-                        queue.put((mat2, x2, y2, l+1))
-                    
-            l += 1
-            loading(step_count, MAX_POSSIBLE_STEP)
-
-        self.bfs_result_found, self.bfs_step_count = result_found, step_count
     
     def dfs(self, matrix, x, y , limit=0 ):
         result_found, step_count = False, 0
         queue = LifoQueue() 
+        visited = {}
         queue.put((matrix, x, y, limit))
         while not queue.empty() and not result_found:
             mat, x, y, l = queue.get()
             flat = self.g.flatten(mat)
-            if flat in self.visited:
+            if flat in visited:
                 continue
 
             step_count += 1
-            self.visited[flat] = True
+            visited[flat] = True
 
             if flat == self.target:
                 result_found = True
@@ -84,9 +56,9 @@ class IDS:
             operations = [self.g.top, self.g.bottom, self.g.right, self.g.left]
             for op in operations:
                 mat2, x2, y2 = op(mat, x, y)
-                if mat2 is not None and (l-1)<=0:
+                if mat2 is not None:
                     flat = self.g.flatten(mat2)
-                    if flat not in self.visited:
+                    if flat not in visited and l > 0:
                         queue.put((mat2, x2, y2, l-1))
             loading(step_count, MAX_POSSIBLE_STEP)
 
@@ -103,10 +75,11 @@ class IDS:
         print("\nTarget matrix: ")
         self.g.display(self.g.target())
         
-        print("\nRunning BFS: ")
-        self.bfs(self.matrix, self.posx, self.posy)
-        print(f"\nTotal steps visited: {self.bfs_step_count}")
-        print(f"Solution Possible: {self.bfs_result_found}")
+        print("\nRunning IDS: ")
+        self.search(self.matrix, self.posx, self.posy)
+        print(f"\nTotal steps visited in last iteration: {self.ids_step_count}")
+        print(f"Total steps visited: {self.total_step_count}")
+        print(f"Solution Possible: {self.ids_result_found}")
         
 if __name__ == '__main__':
     searching = IDS()
