@@ -35,10 +35,14 @@ class Testing:
             self.bfs_dfs.search(self.matrix, self.posx, self.posy, "DFS")
             self.ucs_ids.search(self.matrix, self.posx, self.posy, self.ucs_ids.h0)
             ucs_step_count = self.ucs_ids.step_count
-            self.ucs_ids.search(self.matrix, self.posx, self.posy, self.ucs_ids.h1, quite=True)
-
+            total_steps = 0
+            for depth in range(100):
+                self.ucs_ids.search(self.matrix, self.posx, self.posy, self.ucs_ids.h1, depth, quite=True)
+                total_steps += self.ucs_ids.step_count
+                if self.ucs_ids.result_found or self.ucs_ids.step_count >= 181440:
+                    break
             result.append(
-                [self.bfs_dfs.dfs_step_count, self.bfs_dfs.bfs_step_count, ucs_step_count, self.ucs_ids.step_count, True])
+                [self.bfs_dfs.dfs_step_count, self.bfs_dfs.bfs_step_count, ucs_step_count, total_steps, True])
             
             score[result[i].index(min(result[i][0:4]))] += 1
 
@@ -52,8 +56,8 @@ class Testing:
 
         print("\n----SCORES-----")
         print(
-            f"DFS: {score[0]}\nBFS: {score[1]}\nUFS: {score[0]}\nIDS: {score[1]}")
+            f"DFS: {score[0]}\nBFS: {score[1]}\nUFS: {score[2]}\nIDS: {score[3]}")
 
 if __name__ == '__main__':
     t = Testing()
-    t.benchmark(50)
+    t.benchmark(10)
