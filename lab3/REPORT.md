@@ -15,7 +15,7 @@ if __name__ == '__main__':
 
 ### Benchmarking
 
-#### 10 testcases
+#### 20 testcases
 ```
 Benchmarking...
 [■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■] 100%Epoch 1 completed
@@ -28,6 +28,16 @@ Benchmarking...
 [■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■   ] 94%Epoch 8 completed
 [■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■] 100%Epoch 9 completed
 [■■■■■■■■■■■■■■■■■■■■■■■■■■              ] 65%Epoch 10 completed
+[■■■■■■■■■■■■■                           ] 32%Epoch 11 completed
+[■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■] 100%Epoch 12 completed
+[■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■] 100%Epoch 13 completed
+[■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■    ] 92%Epoch 14 completed
+[■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■] 100%Epoch 15 completed
+[■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■] 100%Epoch 16 completed
+[■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■      ] 86%Epoch 17 completed
+[■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■] 100%Epoch 18 completed
+[■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■] 100%Epoch 19 completed
+[■■■■■■■■■■■■■                           ] 32%Epoch 20 completed
 
 ----RESULTS----[10 epochs]
 DFS     BFS     UFS     IDS     result
@@ -41,12 +51,22 @@ DFS     BFS     UFS     IDS     result
 42522   171531  171598  506167  True
 0       0       0       0       False
 36051   103914  118806  146909  True
+49345   62147   59660   259418  True
+0       0       0       0       False
+0       0       0       0       False
+52521   156111  167255  145926  True
+0       0       0       0       False
+0       0       0       0       False
+141114  160993  157182  136992  True
+0       0       0       0       False
+0       0       0       0       False
+116767  62111   59660   192463  True
 
 ----SCORES-----
-DFS: 4
+DFS: 6
 BFS: 2
-UFS: 0
-IDS: 0
+UFS: 1
+IDS: 1
 ```
 
 ## Observation
