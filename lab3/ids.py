@@ -11,7 +11,7 @@ def loading(current_value, total_value, bar_length=40):
     progress = min(1.0, current_value / total_value)
     arrow = '■' * int(progress * bar_length)
     spaces = ' ' * (bar_length - len(arrow))
-    print(f'\r[{arrow}{spaces}] {int(progress * 100)}%', end='', flush=True)
+    print(f'\r[{arrow}{spaces}] {(progress * 100):.2f}%', end='', flush=True)
 
 class IDS:
     
@@ -29,9 +29,9 @@ class IDS:
     def search(self, matrix, x, y):
         
         for limit in range(MAX_DEPTH):
+            print(f"\nDepth: {limit}")
             self.ids_result_found, self.ids_step_count = self.dfs(matrix, x, y, limit)
             self.total_step_count += self.ids_step_count
-            print(f"\nDepth: {limit}")
             if(self.ids_result_found):
                 break
     
