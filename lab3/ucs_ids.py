@@ -24,13 +24,11 @@ class Solution:
         self.gval = {}
         self.optimal_path_distance = 0
 
-    def search(self, matrix, x, y , hurestic , depth = -1, visited = None, queue = None):
+    def search(self, matrix, x, y , hurestic , depth = -1, quite = False):
         result_found = False
-        if depth == -1 :
-            self.step_count = 0
-            queue = PriorityQueue() # open list
-            visited = {} # closed list
-        next_queue = PriorityQueue()
+        self.step_count = 0
+        queue = PriorityQueue() # open list
+        visited = {} # closed list
         # initialize
         queue.put((0, 0, x, y, matrix))
         while not queue.empty() and not result_found:
@@ -56,13 +54,10 @@ class Solution:
                     if gn <= depth:
                         fn = int( hurestic(mat2,  self.target_mat ))
                     queue.put((fn ,gn + 1, x2, y2, mat2) )
-                elif gn > depth and mat2 is not None:
-                    fn = int( hurestic(mat2,  self.target_mat ))
-                    next_queue.put((fn ,gn + 1, x2, y2, mat2) )
-
-            loading(self.step_count, MAX_POSSIBLE_STEP)
+            if not quite:
+                loading(self.step_count, MAX_POSSIBLE_STEP)
         self.result_found = result_found
-        return visited, next_queue
+        return visited
 
 
     def run(self):
@@ -83,16 +78,16 @@ class Solution:
 
         print("Running IDDFS Search: ")
         start = time.time()
-        visited = {}
-        queue = PriorityQueue()
         self.step_count = 0
-        for depth in range(1000):
+        total_steps = 0
+        for depth in range(100):
             print("Depth : ", depth)
-            visited, queue = self.search(self.matrix, self.posx, self.posy, self.h1, depth, visited, queue )
-            if self.result_found:
+            self.search(self.matrix, self.posx, self.posy, self.h1, depth )
+            total_steps += self.step_count
+            if self.result_found or self.step_count == 181440:
                 break
         delta = time.time() -start
-        print(f"\nTotal steps visited: {self.step_count}")
+        print(f"\nTotal steps visited: {total_steps}")
         print(f"Solution Possible: {self.result_found}")
         print(f"Optimal Solution Distance: {self.optimal_path_distance}")
         print(f"Time taken: {delta:06f} seconds")
