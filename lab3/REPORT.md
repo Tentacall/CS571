@@ -4,7 +4,7 @@
 - Rupak Biswas [ 2001CS57 ]
 ---
 ### How to run ?
-```
+```python
 if __name__ == '__main__':
     sol = Solution()
     sol.benchmark(20)
@@ -28,6 +28,16 @@ Benchmarking...
 [■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■   ] 94%Epoch 8 completed
 [■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■] 100%Epoch 9 completed
 [■■■■■■■■■■■■■■■■■■■■■■■■■■              ] 65%Epoch 10 completed
+[■■■■■■■■■■■■■                           ] 32%Epoch 11 completed
+[■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■] 100%Epoch 12 completed
+[■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■] 100%Epoch 13 completed
+[■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■    ] 92%Epoch 14 completed
+[■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■] 100%Epoch 15 completed
+[■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■] 100%Epoch 16 completed
+[■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■      ] 86%Epoch 17 completed
+[■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■] 100%Epoch 18 completed
+[■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■] 100%Epoch 19 completed
+[■■■■■■■■■■■■■                           ] 32%Epoch 20 completed
 
 ----RESULTS----[10 epochs]
 DFS     BFS     UFS     IDS     result
@@ -41,26 +51,37 @@ DFS     BFS     UFS     IDS     result
 42522   171531  171598  506167  True
 0       0       0       0       False
 36051   103914  118806  146909  True
+49345   62147   59660   259418  True
+0       0       0       0       False
+0       0       0       0       False
+52521   156111  167255  145926  True
+0       0       0       0       False
+0       0       0       0       False
+141114  160993  157182  136992  True
+0       0       0       0       False
+0       0       0       0       False
+116767  62111   59660   192463  True
 
 ----SCORES-----
-DFS: 4
+DFS: 6
 BFS: 2
-UFS: 0
-IDS: 0
+UFS: 1
+IDS: 1
 ```
 
 ## Observation
 
 ### 1.
-- From Benchmark we can say DFS in better in average than BFS in this case
+- From Benchmark we can say DFS in better in average than the rest
 
 ### 2.
-- By running both BFS and DFS 20 times, 10 times a path was found
-- DFS was better in 80% of the cases than BFS
+- By running all algorithms 20 times, 10 times a path was found
+- DFS was better in 60% of the cases, BFS in 20%, and UFS and IDS in 10% of the cases each.
 
 ### 3.
-- By running both BFS and DFS 100 times, 47 times a path was found
-- DFS was better in 74% of the cases than BFS
+- Overall, in the terms of the performance (cost)
+    - DFS > BFS > UFS > IDS
+
 
 ## Intuition
 
@@ -85,6 +106,10 @@ IDS: 0
 - Due to high inter-connectivity between the nodes (states), the number of states visited in higher depth can be lower than the nearly lower depth
 - Overall, on an average, the number of states visited is increasing as the depth increases, but not monotonically
 - IDS is giving result usually in the range of depth of 30
+
+### 5.
+- UFS works like Dijikstra algorithm
+- But in this case it doesn't affect the performance much due to the complex structure of the state graph
 
 ## Time complexity
 
