@@ -15,7 +15,7 @@ if __name__ == '__main__':
 
 ### Benchmarking
 
-#### 10 testcases
+#### 20 testcases
 ```
 Benchmarking...
 [■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■] 100%Epoch 1 completed
