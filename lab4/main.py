@@ -105,21 +105,20 @@ class Solution:
             
     def benchmark(self, epoch):
         print("Benchmarking...")
-        score = [0,0,0,0,0]
-        result = [[], [], [], [], []]
+        score = [0,0]
+        hurestics = [ self.h2, self.h3]
+        result = [[], []]
         for i in range(epoch):
             self.matrix = self.g.generate()
             self.posx, self.posy = self.g.position(self.matrix)
             round_max = 999999999 
             round_index = -1
 
-            hurestics = [self.h1, self.h2, self.h3, self.h4, self.h5]
-            for j in range(5):
+            for j in range(len(hurestics)):
                 self.search(self.matrix, self.posx, self.posy, hurestics[j])
                 result[j].append(self.step_count)
                 if self.step_count == 181440 :
-                    for p in range(1, 5):
-                        result[p].append(181440)
+                    result[1].append(181440)
                     break
                 if self.step_count < round_max:
                     round_max = self.step_count
@@ -129,17 +128,17 @@ class Solution:
             print(f"Round {i+1} completed")
         
         print(f"\n----RESULTS----[{epoch} epochs]")
-        print("round\th1\th2\th3\th4\th5")
+        print("round\th2\th3")
         for i in range(epoch):
-            print(f"{i}\t{result[0][i]}\t{result[1][i]}\t{result[2][i]}\t{result[3][i]}\t{result[4][i]}")
+            print(f"{i}\t{result[0][i]}\t{result[1][i]}")
 
         print("\n----SCORES-----")
-        print(f"h1: {score[0]}\nh2: {score[1]}\nh3: {score[2]}\nh4: {score[3]}\nh5: {score[4]}")
+        print(f"h2: {score[0]}\nh3: {score[1]}")
 
 if __name__ == '__main__':
     sol = Solution()
-    # sol.benchmark(20)
-    sol.matrix = [[2,1,8],[3, 'B', 7],[6,5,4]]
-    sol.posx, sol.posy = 1, 1
-    sol.run()
+    sol.benchmark(10)
+    #sol.matrix = [[2,1,8],[3, 'B', 7],[6,5,4]]
+    #sol.posx, sol.posy = 1, 1
+    #sol.run()
     # sol.verify_q2()
