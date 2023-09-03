@@ -137,8 +137,7 @@ class Solution:
 
 if __name__ == '__main__':
     sol = Solution()
-    sol.benchmark(10)
-    #sol.matrix = [[2,1,8],[3, 'B', 7],[6,5,4]]
-    #sol.posx, sol.posy = 1, 1
-    #sol.run()
-    # sol.verify_q2()
+    # sol.benchmark(20)
+    sol.matrix = [[2,1,8],[3, 'B', 7],[6,5,4]]
+    sol.posx, sol.posy = 1, 1
+    sol.run()
