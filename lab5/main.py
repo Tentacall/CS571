@@ -84,6 +84,8 @@ class Solution:
             loading(self.step_count, MAX_POSSIBLE_STEP)
             # print(temp, self.step_count)
             temp = cooling_function(temp)
+            if(all_neighbours==[]):
+                break
 
         return best_solution, best_cost
 

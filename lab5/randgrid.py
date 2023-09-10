@@ -11,22 +11,14 @@ class Grid:
         pass
 
     def generate(self) -> List[List[int]]:
-        # array = [i for i in range(1, GRID_SIZE**2)] + ['B']
-        # random.shuffle(array)
-        input_path = os.path.join(os.path.dirname(__file__), 'input.txt')
-        array = []
-        for line in fileinput.input(files=input_path):
-            line = line.strip()
-            line = line.split(' ')
-            for num in line:
-                array.append(int(num) if num != 'B' else num)
+        array = [i for i in range(1, GRID_SIZE**2)] + ['B']
+        random.shuffle(array)
         matrix = []
         for i in range(GRID_SIZE):
             row = []
             for j in range(GRID_SIZE):
                 row.append(array[i*GRID_SIZE + j])
             matrix.append(row)
-        
         return matrix
 
     def display(self, matrix: List[List[int]]) -> None:
