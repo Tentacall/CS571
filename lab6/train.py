@@ -267,6 +267,35 @@ class DecisionTree:
         with open(title, "rb") as modelfile:
             self.root = pickle.load(modelfile)
 
+def checkQ4():
+    l = Loader("datasets")
+    ngrams = NGram(3, l, [500,300,200])
+    l._extract_features(ngrams.grams, 3)
+    l._extract_features_test(ngrams.grams, 3)
+
+    # define decision tree
+    tree1= DecisionTree('gini')
+    tree2= DecisionTree('entropy')
+    tree3= DecisionTree('misclass')
+
+    # load tree
+    tree1.load("DT_gini_hue.pkl")
+    tree2.load("DT_entropy.pkl")
+    tree3.load("DT_misclass.pkl")
+
+    # test
+    count = 0
+    for data in l.test_data:
+        x1 = tree1._predict(tree1.root, data)
+        x2 = tree2._predict(tree2.root, data)
+        x3 = tree3._predict(tree3.root, data)
+        if x1 == x2 == x3:
+            continue
+        else:
+            print(f"Label: {data.label}, gini_pred = {x1}, entropy_pred = {x2}, misclass_pred = {x3}")
+            count += 1
+    print(f"total {count} errors")
+
 
 if __name__== '__main__':
     # load dataset and extract feature
@@ -279,8 +308,8 @@ if __name__== '__main__':
     tree = DecisionTree('misclass')
     # tree.fit(l)
     # tree.save("DT_misclass.pkl")
-    tree.load("DT_misclass.pkl")
+    tree.load("DT_entropy.pkl")
     # tree.display(tree.root)
     tree.test(l)
-
+    # checkQ4()
     
