@@ -50,6 +50,10 @@ class Loader:
     def _extract_features(self, freq_grams, n):
         for data in self.train_data:
             data.features = data._get_features(freq_grams, n)
+    
+    def _extract_features_test(self, freq_grams, n):
+        for data in self.test_data:
+            data.features = data._get_features(freq_grams, n)
 
 
 class NGram:
@@ -90,6 +94,5 @@ if __name__ == '__main__':
     l = Loader("datasets")
     ngrams = NGram(3, l, [100,60,40])
     l._extract_features(ngrams.grams, 3)
-    
-    print(l.train_data[0].features)
+    l._extract_features_test(ngrams.grams, 3)
 
