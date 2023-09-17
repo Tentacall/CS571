@@ -89,6 +89,33 @@ class NGram:
                 self.freq.append(freq)
                 return
 
+class Utils:
+    @staticmethod
+    def calculate_score(matrix, labels, reverse_map):
+        # precision
+        precision = {}
+        for label in labels:
+            l = reverse_map[label]
+            precision[l] = matrix[l][l] / sum(matrix[l])
+        
+        # recall
+        recall = {}
+        for label in labels:
+            l = reverse_map[label]
+            recall[l] = matrix[l][l] / sum([matrix[i][l] for i in range(len(labels))])
+        
+        # f1 score
+        f1 = {}
+        for label in labels:
+            label = reverse_map[label]
+            f1[label] = 2 * precision[label] * recall[label] / (precision[label] + recall[label])
+        
+        # print the score 
+        for l in range(len(labels)):
+            print(f"{labels[l]} : precision {precision[l]}, recall {recall[l]}, f1 score {f1[l]}")
+
+
+
 
 if __name__ == '__main__':
     l = Loader("datasets")

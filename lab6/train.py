@@ -1,7 +1,8 @@
-from preprocessing import Loader, Data, NGram
-from queue import PriorityQueue
-from nltk import pos_tag
 import pickle
+import matplotlib.pyplot as plt
+import numpy as np
+
+from preprocessing import Loader, NGram, Utils
 
 class DecisionNode:
     def __init__(self, feature_index = None, left= None, right = None, threshold = None, label = None, depth = None) -> None:
@@ -131,10 +132,48 @@ class DecisionTree:
         return loss_before - weighted_loss
     
     def test(self, loader):
-        i = 1
+        all_lables = set()
         for data in loader.test_data:
-            print(f"[{i}] : {tree._predict(tree.root, data)} {data.label}")
-            i += 1
+            all_lables.add(data.label)
+        
+        labels = list(all_lables)
+        reverse_map = {labels[i]:i for i in range(len(labels))}
+
+        matrix = [[0 for i in range(len(labels))] for j in range(len(labels))]
+
+        i = 0
+        for data in loader.test_data:
+            x = self._predict(self.root, data)
+            matrix[labels.index(data.label)][labels.index(x)] += 1
+
+        max = 0
+        for i in range(len(labels)):
+            for j in range(len(labels)):
+                if matrix[i][j] > max:
+                    max = matrix[i][j]
+        # normalize & printing the matrix
+        for i in range(len(labels)):
+            for j in range(len(labels)):
+                print(f"{matrix[i][j]}\t", end="")
+                matrix[i][j] /= max
+            print()
+
+        Utils.calculate_score(matrix, labels, reverse_map)
+
+        matrix = np.array(matrix)
+        plt.imshow(matrix, cmap='viridis', interpolation='nearest')
+        # Customize the plot as needed (e.g., labels, title, color map)
+        plt.colorbar(label='Color Scale')
+        plt.xticks(range(matrix.shape[1]), labels=labels)
+        plt.yticks(range(matrix.shape[0]), labels=labels)
+        # x and y labels
+        plt.xlabel('Predicted')
+        plt.ylabel('Actual')
+        plt.title('Heatmap')
+        # Show the plot
+        plt.show()
+
+
 
     def _predict(self, node, data):
         if node.label:
