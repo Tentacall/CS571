@@ -4,6 +4,10 @@ import numpy as np
 
 from preprocessing import Loader, NGram, Utils
 
+import os
+import sys
+path = os.path.dirname(os.path.abspath(__file__)) + "/"
+
 class DecisionNode:
     def __init__(self, feature_index = None, left= None, right = None, threshold = None, label = None, depth = None) -> None:
         # for decision tree
@@ -214,21 +218,35 @@ class DecisionTree:
         
         return gini
 
-    def _misclassification(self):
-        pass
+    def _misclassification(self, data):
+        total_samples = len(data)
+        label_counts = {}
+        for d in data:
+            if d.label not in label_counts:
+                label_counts[d.label] = 0
+            label_counts[d.label] += 1
+
+        missclass = 1
+        max = 0
+        for label in label_counts:
+            if label_counts[label] > max:
+                max = label_counts[label]
+        missclass -= (max / total_samples)
+
+        return missclass
     
     def save(self):
-        with open("DT_gini.pkl", "wb") as modelfile:
+        with open(path + "DT_gini.pkl", "wb") as modelfile:
             pickle.dump(self.root, modelfile)
         print("model saved")
     
     def load(self):
-        with open("DT_gini.pkl", "rb") as modelfile:
+        with open(path + "DT_gini.pkl", "rb") as modelfile:
             self.root = pickle.load(modelfile)
 
 
 if __name__== '__main__':
-    l = Loader("datasets")
+    l = Loader(path + "datasets")
     ngrams = NGram(3, l, [100,60,40])
     l._extract_features(ngrams.grams, 3)
     l._extract_features_test(ngrams.grams, 3)
