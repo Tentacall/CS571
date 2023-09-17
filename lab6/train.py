@@ -3,13 +3,13 @@ from queue import PriorityQueue
 from nltk import pos_tag
 
 class DecisionNode:
-    def __init__(self, feature_index = None, left= None, right = None, threshold = None, label = None) -> None:
+    def __init__(self, feature_index = None, left= None, right = None, threshold = None, label = None, depth = None) -> None:
         # for decision tree
         self.feature = feature_index
         self.left = left
         self.right = right
         self.threshold = threshold
-
+        self.depth = depth
         # for leaf node
         self.label = label
 
@@ -24,23 +24,28 @@ class DecisionTree:
 
     def fit(self, loader: Loader):
         # all features 
-        features = loader.train_data[0].features.keys()
-        self.root = self._build_tree(features, loader.train_data)
+        features = list(loader.train_data[0].features.keys())
+        self.root = self._build_tree(features, loader.train_data, 0)
 
-    def _build_tree(self, features, data):
+    def _build_tree(self, features, data, level):
+        print("level", level)
         node = DecisionNode()
+        node.depth = level
         node.feature, node.threshold, node.label = self.select_best_feature(features, data)
         
+
+
         if node.label:
             return node # got a leaf node
-        
-        left_data, right_data = self.split_data(data, node.feature, node.threshold)
+        elif node.feature and node.threshold:
+            left_data, right_data = self.split_data(data, node.feature, node.threshold)
 
-        features.remove(node.feature)
-        node.left = self._build_tree(features, left_data)
-        node.right = self._build_tree(features, right_data)
+            features.remove(node.feature)
+            node.left = self._build_tree(features, left_data, level+1)
+            node.right = self._build_tree(features, right_data, level+1)
 
-        return node
+            return node
+        return None
     
     def split_data(self, data, feature, threshold):
         left_data = []
@@ -56,6 +61,8 @@ class DecisionTree:
         
 
     def select_best_feature(self, features, data):
+        if len(data) == 0 or len(features) == 0:
+            return None, None, None
         best_feature = None
         best_threshold = None
         best_gain = None
@@ -64,10 +71,22 @@ class DecisionTree:
             if feature == 'label':
                 continue
             threshold, gain = self.select_best_threshold(data, feature)
-            if best_gain is None or gain > best_gain:
+            # print(best_gain, gain, threshold, feature) 
+            if best_gain is None  or gain > best_gain:
                 best_gain = gain
                 best_feature = feature
                 best_threshold = threshold
+
+        # if no feature is selected, then it is a leaf node, so return the label
+        if best_feature is None:
+            label_counts = {}
+            for d in data:
+                if d.label not in label_counts:
+                    label_counts[d.label] = 0
+                label_counts[d.label] += 1
+            return None, None, max(label_counts, key = label_counts.get)
+        else:
+            return best_feature, best_threshold, None
 
     def select_best_threshold(self, data, feature):
         # sort the data according to the feature
@@ -77,6 +96,8 @@ class DecisionTree:
         # get the mid points of the values
         mid_points = [(values[i] + values[i+1]) / 2 for i in range(len(values) - 1)]
         # get the best threshold
+        if len(mid_points) == 0 :
+            mid_points = values
         best_threshold = None
         best_gain = None
         for threshold in mid_points:
