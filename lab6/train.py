@@ -241,19 +241,18 @@ class DecisionTree:
 
 
 if __name__== '__main__':
+    # load dataset and extract feature
     l = Loader("datasets")
     ngrams = NGram(3, l, [500,300,200])
     l._extract_features(ngrams.grams, 3)
     l._extract_features_test(ngrams.grams, 3)
-    # for i in range(1, 4):
-    #     for j in range(len(ngrams.grams[i])):
-    #         print(ngrams.grams[i][j], ngrams.freq[i][j])
-            
+    
+
     tree = DecisionTree()
     tree.loss_function  = tree._entropy
-    tree.fit(l)
-    tree.save("DT_entropy.pk")
-    # tree.load()
+    # tree.fit(l)
+    # tree.save("DT_entropy.pk")
+    tree.load("DT_entropy.pk")
     tree.display(tree.root)
     tree.test(l)
 
