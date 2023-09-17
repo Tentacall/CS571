@@ -1,4 +1,4 @@
-## LAB: 5
+## LAB: 6
 #### Team
 - Sanskriti Singh [ 2001CS60 ]
 - Rupak Biswas [ 2001CS57 ]
@@ -41,7 +41,7 @@ classifier.
 - For parts of speech tag unigrams, first you need to get a POS tag for each question instance. Similar  to lexical features use 500 most frequent 1-gram to build the model.
 
 
-## Results
+## Observation
 
 ### GINI
 
@@ -87,3 +87,42 @@ ENTY : precision 0.925531914893617, recall 0.8446601941747574, f1 score 0.883248
 HUM : precision 1.0, recall 1.0, f1 score 1.0
 NUM : precision 0.9380530973451328, recall 0.9724770642201835, f1 score 0.954954954954955
 ```
+### Error Propagation
+
+```
+Label: NUM, gini_pred = ENTY, entropy_pred = ENTY, misclass_pred = LOC
+Label: LOC, gini_pred = LOC, entropy_pred = ENTY, misclass_pred = ENTY
+Label: NUM, gini_pred = ENTY, entropy_pred = ENTY, misclass_pred = LOC
+Label: ENTY, gini_pred = ENTY, entropy_pred = ENTY, misclass_pred = NUM
+Label: LOC, gini_pred = LOC, entropy_pred = LOC, misclass_pred = ENTY
+Label: ENTY, gini_pred = ENTY, entropy_pred = ENTY, misclass_pred = LOC
+Label: NUM, gini_pred = ENTY, entropy_pred = ENTY, misclass_pred = NUM
+Label: ENTY, gini_pred = ENTY, entropy_pred = NUM, misclass_pred = ENTY
+Label: ENTY, gini_pred = ENTY, entropy_pred = ENTY, misclass_pred = LOC
+Label: LOC, gini_pred = LOC, entropy_pred = LOC, misclass_pred = ENTY
+Label: LOC, gini_pred = LOC, entropy_pred = LOC, misclass_pred = ENTY
+Label: LOC, gini_pred = ENTY, entropy_pred = NUM, misclass_pred = ENTY
+Label: ENTY, gini_pred = NUM, entropy_pred = ENTY, misclass_pred = ENTY
+Label: NUM, gini_pred = ENTY, entropy_pred = NUM, misclass_pred = ENTY
+Label: LOC, gini_pred = ENTY, entropy_pred = LOC, misclass_pred = ENTY
+Label: LOC, gini_pred = LOC, entropy_pred = LOC, misclass_pred = ENTY
+Label: ENTY, gini_pred = ENTY, entropy_pred = NUM, misclass_pred = ENTY
+Label: LOC, gini_pred = ENTY, entropy_pred = LOC, misclass_pred = LOC
+Label: ENTY, gini_pred = ENTY, entropy_pred = ENTY, misclass_pred = LOC
+Label: LOC, gini_pred = LOC, entropy_pred = LOC, misclass_pred = ENTY
+Label: LOC, gini_pred = ENTY, entropy_pred = ENTY, misclass_pred = LOC
+Label: ENTY, gini_pred = ENTY, entropy_pred = NUM, misclass_pred = ENTY
+Label: NUM, gini_pred = NUM, entropy_pred = NUM, misclass_pred = ENTY
+Label: LOC, gini_pred = LOC, entropy_pred = LOC, misclass_pred = ENTY
+Label: NUM, gini_pred = ENTY, entropy_pred = ENTY, misclass_pred = LOC
+Label: LOC, gini_pred = LOC, entropy_pred = LOC, misclass_pred = ENTY
+Label: ENTY, gini_pred = NUM, entropy_pred = NUM, misclass_pred = ENTY
+total 27 errors
+```
+
+## Result
+- Order of contribution of features
+    - n-gram > pos-unigram > length
+- There were 27 instances in 500 test data (5.4%) were the one or more among the 3 criterions gave wrong and different prediction
+
+
