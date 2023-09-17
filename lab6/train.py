@@ -5,6 +5,10 @@ import math
 
 from preprocessing import Loader, NGram, Utils
 
+import os
+import sys
+path = os.path.dirname(os.path.abspath(__file__)) + "/"
+
 class DecisionNode:
     def __init__(self, feature_index = None, left= None, right = None, threshold = None, label = None, depth = None) -> None:
         # for decision tree
@@ -17,9 +21,14 @@ class DecisionNode:
         self.label = label
 
 class DecisionTree:
-    def __init__(self) -> None:
+    def __init__(self, criteria = 'gini') -> None:
         self.root = None
-        self.loss_function = self._gini
+        self.criteria = criteria
+        if criteria!= 'misclass' and criteria != 'entropy' and criteria != 'gini':
+            print("invalid criteria, setting to gini")
+            self.criteria = 'gini'
+        self.loss_function = self._misclassification if criteria == 'misclass' else self._entropy if criteria == 'entropy' else self._gini
+
         # initialize the tree
         # self.fit(loader)
 
@@ -177,6 +186,8 @@ class DecisionTree:
 
 
     def _predict(self, node, data):
+        if node is None:
+            return None
         if node.label:
             return node.label
         elif node.feature and node.threshold:
@@ -205,11 +216,11 @@ class DecisionTree:
             if d.label not in label_counts:
                 label_counts[d.label] = 0
             label_counts[d.label] += 1
-        
+
         entropy = 0
         for label in label_counts:
-            prob = label_counts[label] / total_samples
-            entropy -= prob * math.log2(prob)
+            p = (label_counts[label] / total_samples)
+            entropy -= p * math.log2(p)
 
         return entropy
 
@@ -227,8 +238,25 @@ class DecisionTree:
         
         return gini
 
-    def _misclassification(self):
-        pass
+    def _misclassification(self, data):
+        total_samples = len(data)
+        label_counts = {}
+        for d in data:
+            if d.label not in label_counts:
+                label_counts[d.label] = 0
+            label_counts[d.label] += 1
+
+        missclass = 1
+        max = 0
+        for label in label_counts:
+            if label_counts[label] > max:
+                max = label_counts[label]
+        try: 
+            missclass -= (max / total_samples)
+        except:
+            pass
+
+        return missclass
     
     def save(self, title):
         with open(title, "wb") as modelfile:
@@ -247,13 +275,12 @@ if __name__== '__main__':
     l._extract_features(ngrams.grams, 3)
     l._extract_features_test(ngrams.grams, 3)
     
-
-    tree = DecisionTree()
-    tree.loss_function  = tree._entropy
+    # gini, entropy, misclass
+    tree = DecisionTree('misclass')
     # tree.fit(l)
-    # tree.save("DT_entropy.pk")
-    tree.load("DT_entropy.pk")
-    tree.display(tree.root)
+    # tree.save("DT_misclass.pkl")
+    tree.load("DT_misclass.pkl")
+    # tree.display(tree.root)
     tree.test(l)
 
     
