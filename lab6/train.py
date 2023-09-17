@@ -20,10 +20,14 @@ class DecisionNode:
         self.label = label
 
 class DecisionTree:
-    def __init__(self, loader, depth = None) -> None:
+    def __init__(self, loader, depth = None, criteria = 'gini') -> None:
         self.root = None
         self.depth = depth
-        self.loss_function = self._gini
+        self.criteria = criteria
+        if criteria!= 'misclass' and criteria != 'entropy' and criteria != 'gini':
+            print("invalid criteria, setting to gini")
+            self.criteria = 'gini'
+        self.loss_function = self._misclassification if criteria == 'misclass' else self._entropy if criteria == 'entropy' else self._gini
 
         # initialize the tree
         # self.fit(loader)
@@ -180,6 +184,8 @@ class DecisionTree:
 
 
     def _predict(self, node, data):
+        if node is None:
+            return None
         if node.label:
             return node.label
         elif node.feature and node.threshold:
@@ -201,8 +207,20 @@ class DecisionTree:
             print(" "*node.depth + f"return {node.label}")
 
 
-    def _entropy(self):
-        pass
+    def _entropy(self, data):
+        total_samples = len(data)
+        label_counts = {}
+        for d in data:
+            if d.label not in label_counts:
+                label_counts[d.label] = 0
+            label_counts[d.label] += 1
+
+        entropy = 0
+        for label in label_counts:
+            p = (label_counts[label] / total_samples)
+            entropy -= p * np.log2(p)
+
+        return entropy
 
     def _gini(self, data):
         total_samples = len(data)
@@ -231,17 +249,20 @@ class DecisionTree:
         for label in label_counts:
             if label_counts[label] > max:
                 max = label_counts[label]
-        missclass -= (max / total_samples)
+        try: 
+            missclass -= (max / total_samples)
+        except:
+            pass
 
         return missclass
     
     def save(self):
-        with open(path + "DT_gini.pkl", "wb") as modelfile:
+        with open(path + f"DT_{self.criteria}.pkl", "wb") as modelfile:
             pickle.dump(self.root, modelfile)
         print("model saved")
     
     def load(self):
-        with open(path + "DT_gini.pkl", "rb") as modelfile:
+        with open(path + f"DT_{self.criteria}.pkl", "rb") as modelfile:
             self.root = pickle.load(modelfile)
 
 
@@ -254,10 +275,10 @@ if __name__== '__main__':
     #     for j in range(len(ngrams.grams[i])):
     #         print(ngrams.grams[i][j], ngrams.freq[i][j])
             
-    tree = DecisionTree(l)
-    # tree.fit(l)
-    # tree.save()
-    tree.load()
+    tree = DecisionTree(l, criteria = "misclass")
+    tree.fit(l)
+    tree.save()
+    # tree.load()
     # tree.display(tree.root)
     tree.test(l)
     print(len(l.test_data))
