@@ -34,15 +34,15 @@ class DecisionTree:
         node.feature, node.threshold, node.label = self.select_best_feature(features, data)
         
 
-
         if node.label:
             return node # got a leaf node
         elif node.feature and node.threshold:
             left_data, right_data = self.split_data(data, node.feature, node.threshold)
 
-            features.remove(node.feature)
-            node.left = self._build_tree(features, left_data, level+1)
-            node.right = self._build_tree(features, right_data, level+1)
+            new_features = features.copy()
+            new_features.remove(node.feature)
+            node.left = self._build_tree(new_features, left_data, level+1)
+            node.right = self._build_tree(new_features, right_data, level+1)
 
             return node
         return None
@@ -63,6 +63,12 @@ class DecisionTree:
     def select_best_feature(self, features, data):
         if len(data) == 0 or len(features) == 0:
             return None, None, None
+        
+        if len(features) == 1:
+            return  None, None, features[0]
+        
+        print("features", len(features))
+
         best_feature = None
         best_threshold = None
         best_gain = None
@@ -123,8 +129,16 @@ class DecisionTree:
     def predict(self):
         pass
 
-    def _predict(self):
-        pass
+    def display(self, node):
+        if node.left:
+            print(" "*node.depth + f"if {node.feature} < {node.threshold}:")
+            self.display(node.left)
+        if node.right:
+            print(" "*node.depth + f"else:")
+            self.display(node.right)
+        if node.label:
+            print(" "*node.depth + f"return {node.label}")
+
 
     def _entropy(self):
         pass
@@ -154,6 +168,7 @@ if __name__== '__main__':
     l._extract_features(ngrams.grams, 3)
 
     tree = DecisionTree(l)
+    tree.display(tree.root)
         
 
 
