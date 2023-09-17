@@ -1,12 +1,38 @@
 from nltk import pos_tag
+START = '<start>'
 
 class Data:
     def __init__(self, line) -> None:
         line = line.strip()
         self.label = line.split(":")[0]
         self.data = line.split(":")[1].split(" ")[:-1]
-        self.length = len(self.label)
+        self.length = len(self.data)
         self.pos = pos_tag(self.data)
+        self.features = None
+
+
+
+    def _get_features(self, freq_grams, n):
+        features = {}
+        features['length'] = self.length
+
+        # n-gram
+        for i in range(1, 1+n):
+            p = [START]*(i-1) + self.data
+            grams = {}
+            for j in range(len(p) - i):
+                _key = tuple(p[j:j+i])
+                grams[_key] = 1
+
+            for key in freq_grams[i]:
+                if key in grams:
+                    features[key] = 1
+                else:
+                    features[key] = 0
+
+        # pos uni-gram for most frequest n grams 
+        
+        return features
     
 class Loader:
     def __init__(self, directory, train_file = "train_5500.label", test_file = "TREC_10.label") -> None:
@@ -21,7 +47,10 @@ class Loader:
             for line in f:
                 l.append(Data(line))
 
-START = '<start>'
+    def _extract_features(self, freq_grams, n):
+        for data in self.train_data:
+            data.features = data._get_features(freq_grams, n)
+
 
 class NGram:
     def __init__(self, n, loader, freq_caps) -> None:
@@ -59,5 +88,8 @@ class NGram:
 
 if __name__ == '__main__':
     l = Loader("datasets")
-    print(len(l.train_data), len(l.test_data))
+    ngrams = NGram(3, l, [100,60,40])
+    l._extract_features(ngrams.grams, 3)
+    
+    print(l.train_data[0].features)
 

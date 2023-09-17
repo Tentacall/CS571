@@ -36,6 +36,9 @@ class DecisionTree:
     def _gini(self):
         pass
 
+    def _misclassification(self):
+        pass
+
     def _information_gain(self):
         pass
 
