@@ -1,44 +1,48 @@
-from preprocessing import Loader, Data
+from preprocessing import Loader, Data, NGram
 from queue import PriorityQueue
+from nltk import pos_tag
 
-START = '<start>'
+class DecisionNone:
+    def __init__(self, feature_index = None, left= None, right = None, threshold = None, label = None) -> None:
+        # for decision tree
+        self.feature_index = feature_index
+        self.left = left
+        self.right = right
+        self.threshold = threshold
 
-class NGram:
-    def __init__(self, n, loader, freq_caps) -> None:
-        self.n = n
-        self.grams = [None]
-        self.freq = [None]
+        # for leaf node
+        self.label = label
 
-        # populate n gram upto n
-        for i in range(1,n+1):
-            self.update(loader, i, freq_cap=freq_caps[i-1])
+class DecisionTree:
+    def __init__(self, depth = None) -> None:
+        self.root = None
+        self.depth = depth
 
-    def update(self, loader, n, freq_cap):
-        grams = {}
-        for data in loader.train_data:
-            p = [START]*(n-1) + data.data
-            for i in range(len(p) - n):
-                _key = tuple(p[i:i+n])
-                if _key not in grams:
-                    grams[_key] = 0
-                grams[_key] += 1
+    def fit(self):
+        pass
 
-        res = { key:value for key, value in sorted(grams.items(), key= lambda ele: ele[1], reverse= True)}
-        freq_ngrams = []
-        freq = []
-        i = 0
-        for key,value in res.items():
-            freq_ngrams.append(key)
-            freq.append(value)
-            i +=1 
-            if i > freq_cap:
-                self.grams.append(freq_ngrams)
-                self.freq.append(freq)
-                return 
+    def _build_tree(self, features, labels, depth):
+        pass
+
+    def predict(self):
+        pass
+
+    def _predict(self):
+        pass
+
+    def _entropy(self):
+        pass
+
+    def _gini(self):
+        pass
+
+    def _information_gain(self):
+        pass
+
 
 if __name__== '__main__':
     l = Loader("datasets")
-    ngram = NGram(3, l, [200, 100, 50])
+    ngram = NGram(3, l, [500,300,200])
     for j in range(1, 4):
         for i in range(len(ngram.grams[j])):
             print(f"{ngram.grams[j][i]} : {ngram.freq[j][i]}")
