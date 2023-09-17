@@ -1,6 +1,7 @@
 import pickle
 import matplotlib.pyplot as plt
 import numpy as np
+import math
 
 from preprocessing import Loader, NGram, Utils
 
@@ -16,11 +17,9 @@ class DecisionNode:
         self.label = label
 
 class DecisionTree:
-    def __init__(self, loader, depth = None) -> None:
+    def __init__(self) -> None:
         self.root = None
-        self.depth = depth
         self.loss_function = self._gini
-
         # initialize the tree
         # self.fit(loader)
 
@@ -30,7 +29,7 @@ class DecisionTree:
         self.root = self._build_tree(features, loader.train_data, 0)
 
     def _build_tree(self, features, data, level):
-        # print("level", level)
+        print("level", level)
         node = DecisionNode()
         node.depth = level
         node.feature, node.threshold, node.label = self.select_best_feature(features, data)
@@ -51,7 +50,9 @@ class DecisionTree:
             node.right = self._build_tree(new_features, right_data, level+1)
 
             return node
-        return None
+        
+        _, node.label = self._get_max_label(data)
+        return node
     
     def split_data(self, data, feature, threshold):
         left_data = []
@@ -197,8 +198,20 @@ class DecisionTree:
             print(" "*node.depth + f"return {node.label}")
 
 
-    def _entropy(self):
-        pass
+    def _entropy(self, data):
+        total_samples = len(data)
+        label_counts = {}
+        for d in data:
+            if d.label not in label_counts:
+                label_counts[d.label] = 0
+            label_counts[d.label] += 1
+        
+        entropy = 0
+        for label in label_counts:
+            prob = label_counts[label] / total_samples
+            entropy -= prob * math.log2(prob)
+
+        return entropy
 
     def _gini(self, data):
         total_samples = len(data)
@@ -217,31 +230,31 @@ class DecisionTree:
     def _misclassification(self):
         pass
     
-    def save(self):
-        with open("DT_gini.pkl", "wb") as modelfile:
+    def save(self, title):
+        with open(title, "wb") as modelfile:
             pickle.dump(self.root, modelfile)
         print("model saved")
     
-    def load(self):
-        with open("DT_gini.pkl", "rb") as modelfile:
+    def load(self, title):
+        with open(title, "rb") as modelfile:
             self.root = pickle.load(modelfile)
 
 
 if __name__== '__main__':
     l = Loader("datasets")
-    ngrams = NGram(3, l, [100,60,40])
+    ngrams = NGram(3, l, [500,300,200])
     l._extract_features(ngrams.grams, 3)
     l._extract_features_test(ngrams.grams, 3)
     # for i in range(1, 4):
     #     for j in range(len(ngrams.grams[i])):
     #         print(ngrams.grams[i][j], ngrams.freq[i][j])
             
-    tree = DecisionTree(l)
-    # tree.fit(l)
-    # tree.save()
-    tree.load()
-    # tree.display(tree.root)
+    tree = DecisionTree()
+    tree.loss_function  = tree._entropy
+    tree.fit(l)
+    tree.save("DT_entropy.pk")
+    # tree.load()
+    tree.display(tree.root)
     tree.test(l)
-    print(len(l.test_data))
 
     
