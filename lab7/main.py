@@ -21,9 +21,36 @@ class LinearRegression:
         return self.theta1*x + self.theta2
 
 
+    def plot(self, test_data_x, test_data_y):
+        fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(15,6))
+        # add scatter plot 
+        axes[0].scatter(self.data_x, self.data_y, color='red', marker = 'o')
+        x = np.array([-10,1300])
+        y = self.theta1*x + self.theta2
+        axes[0].plot(x, y, label='Line', color='blue')
+        axes[0].set_title('Training set')
+        axes[0].set_xlabel('X-axis')
+        axes[0].set_ylabel('Y-axis')
+        # axes[0].legend()
+        # add 
+
+        axes[1].scatter(test_data_x, test_data_y, color='red', marker = 'o')
+        axes[1].plot(x, y, label='Line', color='blue')
+        axes[1].set_title('Test set')
+        axes[1].set_xlabel('X-axis')
+        axes[1].set_ylabel('Y-axis')
+        # axes[1].legend()
+
+        plt.show()
+
 if __name__ == '__main__':
     import os
     path = os.path.dirname(os.path.abspath(__file__)) + "/"
     x,y = Utily.load(path + "data.tsv")
     lr = LinearRegression(x,y)
-    print(lr.predict(100))
+
+    _, test_x = Utily.load(path + "test_data.tsv")
+    test_y = []
+    for i in range(len(test_x)):
+        test_y.append(lr.predict(test_x[i]))
+    lr.plot(test_x, test_y)
