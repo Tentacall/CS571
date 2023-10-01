@@ -54,3 +54,12 @@ if __name__ == '__main__':
     for i in range(len(test_x)):
         test_y.append(lr.predict(test_x[i]))
     lr.plot(test_x, test_y)
+
+    test_y = np.array(test_y)
+    sunday_percent = (test_y / test_x) * 100
+    average_percentage = sunday_percent.mean()
+    minimum_percentage = sunday_percent.min()
+    maximum_percentage = sunday_percent.max()
+    print("average_percentage : ", average_percentage)
+    print("minimum_percentage : ", minimum_percentage)
+    print("Maximum_percentage : ", maximum_percentage)
