@@ -2,7 +2,7 @@
 import numpy as np
 from math import e
 
-class LiniearLayer:
+class LinearLayer:
     def __init__(self, input_shape, output_shape) -> None:
         self.neurons =  []
         self.input_shape = input_shape
@@ -17,13 +17,14 @@ class LiniearLayer:
         return np.dot(data, self.weight) + self.bias # [N,A].[A,B] + [1,B] = [N,B]
     
     def _backward(self, loss, lr):
-        #loss = [N,B]
-        inp_error = np.dot(loss, self.weight.T) # [N,B].[B,A] -> [N,A]
-        weight_error = np.dot(self.input_data.T, loss) # [A,N][N,B] -> [A,B]
-        
-        #adjust weights and biases
-        self.weight -= lr*weight_error 
-        self.bias -= lr*loss
+        # loss = [N, B]
+        inp_error = np.dot(loss, self.weight.T)  # [N, B] dot [B, A] -> [N, A]
+        # [784, 1] dot [N, B] -> [784, B]
+        weight_error = np.dot(self.input_data.reshape(-1, 1), loss)
+
+        # adjust weights and biases
+        self.weight -= lr * weight_error
+        self.bias -= lr * loss
 
         return inp_error
 
@@ -41,7 +42,7 @@ class Activation:
         return self.activation(self.input_data)
 
     def _backward(self, loss, lr):
-        return self.activation_prime(self.input)*loss
+        return self.activation_prime(self.input_data)*loss
     
 class SigmoidActivation(Activation):
     def __init__(self, input_shape) -> None:
@@ -78,11 +79,12 @@ class Network:
             error = 0
             for j in range(samples):
                 data = train_x[j]
+                target = train_y[j]
                 for layer in self.layers:
                     data = layer._forward(data)
                 
-                error += self.error(train_y,data)
-                loss = self.error_prime(train_y, data)
+                error += self.error(target,data)
+                loss = self.error_prime(target, data)
                 for layer in self.layers[::-1]:
                     loss = layer._backward(loss, self.lr)
             print(f"[Epoch {i+1}] loss = {error/samples}")
@@ -103,12 +105,18 @@ class Error:
     
 
 if __name__ == '__main__':
-    x_train = np.array([[[0,0]], [[0,1]], [[1,0]], [[1,1]]])
-    y_train = np.array([[[0]], [[1]], [[1]], [[0]]])
+    # x_train = np.array([[[0,0]], [[0,1]], [[1,0]], [[1,1]]])
+    # y_train = np.array([[[0]], [[1]], [[1]], [[0]]])
+    from preprocessing import Dataset, load
+    labels, pixels = load('archive/mnist_train.csv')
+    train = Dataset(labels, pixels)
+    labels, pixels = load('archive/mnist_test.csv')
+    test = Dataset(labels, pixels)
+    
     net = Network(Error.mse_error, Error.mse_error_prime)
-    net.add(LiniearLayer(2,3))
-    net.add(SigmoidActivation(3))
-    net.add(LiniearLayer(3,1))
-    net.add(SigmoidActivation(1))
+    net.add(LinearLayer(784, 152))
+    net.add(SigmoidActivation(152))
+    net.add(LinearLayer(152,10))
+    net.add(SigmoidActivation(10))
 
-    net.fit(x_train, y_train, 100, 0.1)
+    net.fit(train.data, train.targets, 100, 0.001)
