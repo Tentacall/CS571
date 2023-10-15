@@ -20,3 +20,9 @@ class Linear_regression:
     
     def gradient(self):
         pass
+
+class LogisticRegression:
+    def __init__(self) -> None:
+        pass
+
+    
