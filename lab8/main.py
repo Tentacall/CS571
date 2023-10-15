@@ -2,12 +2,24 @@ import numpy as np
 from math import e
 from preprocessing import Dataset
 
-class LinearLayer:
+class Layer:
     def __init__(self, input_shape, output_shape) -> None:
-        self.neurons =  []
         self.input_shape = input_shape
         self.output_shape = output_shape
+    
+    def _forward(self, data):
+        raise NotImplementedError
+    
+    def _backward(self, loss, lr):
+        raise NotImplementedError
+    
+    def __str__(self) -> str:
+        return f"[ {self.__name__} ]: {self.input_shape} -> {self.output_shape}]"
 
+class LinearLayer(Layer):
+    def __init__(self, input_shape, output_shape) -> None:
+        super().__init__(input_shape, output_shape)
+        self.__name__ = "Linear Layer"
         self.weight = np.random.rand(input_shape, output_shape) -0.5 # [A, B]
         self.bias = np.random.rand(1, output_shape) -0.5
         self.out = np.zeros(self.output_shape)
@@ -27,9 +39,11 @@ class LinearLayer:
         self.bias -= lr * loss
 
         return inp_error
-    
-    def __str__(self) -> str:
-        return f"[ Liniear Layer ]: {self.input_shape} -> {self.output_shape}]"
+
+class LogisticLayer(Layer):
+    def __init__(self):
+        super().__init__()
+        self.__name__ = "Logistic Layer"
 
 class Activation:
     def __init__(self, input_shape) -> None:
@@ -60,10 +74,10 @@ class SigmoidActivation(Activation):
         self.activation_prime = self.sigmoid_prime
 
     def sigmoid(self, data):
-        # print(data.shape)
         return 1 / ( 1 + e**(-data))
     
     def sigmoid_prime(self, data):
+        # print(data.shape)
         return self.sigmoid(data)*(1-self.sigmoid(data))
 
     
@@ -73,7 +87,6 @@ class TanhActivation(Activation):
         self.__name__ = "Tanh"
         self.activation = lambda x: np.tanh(x)
         self.activation_prime = lambda x: 1 - np.tanh(x)**2
-
 
 class Network:
     def __init__(self, error, error_prime) -> None:
@@ -130,9 +143,9 @@ if __name__ == '__main__':
     test = Dataset('archive/mnist_test.csv')
     
     net = Network(Error.mse_error, Error.mse_error_prime)
-    net.add(LinearLayer(784, 152))
-    net.add(SigmoidActivation(152))
-    net.add(LinearLayer(152,10))
+    net.add(LinearLayer(784, 10))
     net.add(SigmoidActivation(10))
+    # net.add(LinearLayer(152,10))
+    # net.add(TanhActivation(10))
 
-    net.fit(train.data, train.targets, 100, 0.001)
+    net.fit(train.data, train.targets, 100, 0.1)
