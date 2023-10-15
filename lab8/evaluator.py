@@ -11,7 +11,6 @@ class ModelEvaluator:
         self.x_test, self.y_test = dataset.data, dataset.targets
         y_pred_classes = model.predict(self.x_test)
         self.y_pred = np.argmax(y_pred_classes, axis=1)
-        print(self.y_pred.shape, self.y_test.shape)
         self.n_classes = n_classes
         self.evaluator = Evaluation_metrics(self.y_pred, self.y_test, self.n_classes)
         self.conf_mat = self.evaluator.confusion_matrix()
