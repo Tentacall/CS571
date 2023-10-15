@@ -176,7 +176,7 @@ if __name__ == '__main__':
     net.add(LinearLayer(50, 10))
     net.add(TanhActivation(10))
 
-    net.fit(train.data[:1000], train.targets[:1000], 30, 0.1)
-    # net.fit(x_train, y_train, 1000, 0.1)
-    # evaluator = ModelEvaluator(net, test, 10)
+    net.fit(train.data, train.targets, 1, 0.1)
+    evaluator = ModelEvaluator(net, test, 10)
+    print("Accuracy: ", evaluator.acc)
     # evaluator.plot_confusion_matrix()
