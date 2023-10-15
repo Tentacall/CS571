@@ -1,3 +1,4 @@
+from tqdm import trange
 import numpy as np
 from math import e
 from preprocessing import Dataset
@@ -90,7 +91,8 @@ class Network:
 
         for i in range(epoch):
             error = 0
-            for j in range(samples):
+            # for j in range(samples):
+            for j in trange(samples):
                 data = train_x[j]
                 target = train_y[j]
                 for layer in self.layers:
@@ -107,11 +109,6 @@ class Network:
             data_x = layer._forward(data_x)
         return data_x
     
-    def summary(self):
-        print("Network Summary")
-        for layer in self.layers:
-            print(layer)
-    
 class Error:
     @staticmethod
     def mse_error(y_true, y_pred):
@@ -126,6 +123,7 @@ if __name__ == '__main__':
     # x_train = np.array([[[0,0]], [[0,1]], [[1,0]], [[1,1]]])
     # y_train = np.array([[[0]], [[1]], [[1]], [[0]]])
     from preprocessing import Dataset
+    from evaluator import ModelEvaluator
     train = Dataset('archive/mnist_train.csv')
     test = Dataset('archive/mnist_test.csv')
     
@@ -135,4 +133,6 @@ if __name__ == '__main__':
     net.add(LinearLayer(152,10))
     net.add(SigmoidActivation(10))
 
-    net.fit(train.data, train.targets, 100, 0.001)
+    net.fit(train.data, train.targets, 5, 0.001)
+    evaluator = ModelEvaluator(net, test, 10)
+    evaluator.plot_confusion_matrix()
