@@ -17,7 +17,7 @@ class Dataset:
         return labels, pixels
     
     def normalize(self):
-        
+        pass
 
 
 if __name__=='__main__':
