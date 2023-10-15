@@ -5,7 +5,7 @@ class Dataset:
     def __init__(self, filename) -> None:
         labels, pixels = self.load(filename)
         self.targets = np.array(labels)
-        self.data = np.array(pixels)
+        self.data = np.array(self.normalize(pixels))
         
     def get_item(self, indx):
         return self.data[indx], self.targets[indx]
@@ -16,8 +16,9 @@ class Dataset:
         pixels = df.iloc[:, 1:]
         return labels, pixels
     
-    def normalize(self):
-        pass
+    def normalize(self, x):
+        x /= 255
+        return x
 
 
 if __name__=='__main__':
