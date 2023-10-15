@@ -1,3 +1,4 @@
+from tqdm import trange
 import numpy as np
 from math import e
 from preprocessing import Dataset
@@ -20,8 +21,8 @@ class LinearLayer(Layer):
     def __init__(self, input_shape, output_shape) -> None:
         super().__init__(input_shape, output_shape)
         self.__name__ = "Linear Layer"
-        self.weight = np.random.rand(input_shape, output_shape) -0.5 # [A, B]
-        self.bias = np.random.rand(1, output_shape) -0.5
+        self.weight = np.random.rand(input_shape, output_shape) + 0.5 # [A, B]
+        self.bias = np.random.rand(1, output_shape) + 0.5
         self.out = np.zeros(self.output_shape)
     
     def _forward(self, data):
@@ -41,9 +42,28 @@ class LinearLayer(Layer):
         return inp_error
 
 class LogisticLayer(Layer):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, input_shape, output_shape) -> None:
+        super().__init__(input_shape, output_shape)
         self.__name__ = "Logistic Layer"
+        self.weight = np.random.rand(input_shape, output_shape)*0.01 # [A, B]
+        self.bias = np.random.rand(1, output_shape)*0.01
+    
+    def _forward(self, data):
+        self.input_data = data
+        return 1 / ( 1 + np.exp(-np.dot(data, self.weight) + self.bias))
+    
+    def _backward(self, loss, lr):
+        # loss = [N, B]
+        inp_error = np.dot(loss, self.weight.T)
+        # [784, 1] dot [N, B] -> [784, B]
+        weight_error = np.dot(self.input_data.reshape(-1, 1), loss)
+
+        # adjust weights and biases
+        self.weight -= lr * weight_error
+        self.bias -= lr * loss
+
+        return inp_error
+
 
 class Activation:
     def __init__(self, input_shape) -> None:
@@ -74,7 +94,7 @@ class SigmoidActivation(Activation):
         self.activation_prime = self.sigmoid_prime
 
     def sigmoid(self, data):
-        return 1 / ( 1 + e**(-data))
+        return 1 / ( 1 + np.exp(-data))
     
     def sigmoid_prime(self, data):
         # print(data.shape)
@@ -103,7 +123,8 @@ class Network:
 
         for i in range(epoch):
             error = 0
-            for j in range(samples):
+            # for j in range(samples):
+            for j in trange(samples):
                 data = train_x[j]
                 target = train_y[j]
                 for layer in self.layers:
@@ -120,11 +141,6 @@ class Network:
             data_x = layer._forward(data_x)
         return data_x
     
-    def summary(self):
-        print("Network Summary")
-        for layer in self.layers:
-            print(layer)
-    
 class Error:
     @staticmethod
     def mse_error(y_true, y_pred):
@@ -134,18 +150,33 @@ class Error:
     def mse_error_prime(y_true, y_pred):
         return 2*(y_pred-y_true)/y_true.size
     
+    @staticmethod
+    def half_squared_error(y_true, y_pred):
+        return np.mean(np.power(y_true-y_pred, 2))/2
+    
+    @staticmethod
+    def half_squared_error_prime(y_true, y_pred):
+        return (y_pred-y_true)/y_true.size
+    
 
 if __name__ == '__main__':
-    # x_train = np.array([[[0,0]], [[0,1]], [[1,0]], [[1,1]]])
-    # y_train = np.array([[[0]], [[1]], [[1]], [[0]]])
+    x_train = np.array([[[0,0]], [[0,1]], [[1,0]], [[1,1]]])
+    y_train = np.array([[[0]], [[1]], [[1]], [[0]]])
     from preprocessing import Dataset
+    from evaluator import ModelEvaluator
     train = Dataset('archive/mnist_train.csv')
     test = Dataset('archive/mnist_test.csv')
     
-    net = Network(Error.mse_error, Error.mse_error_prime)
-    net.add(LinearLayer(784, 10))
-    net.add(SigmoidActivation(10))
-    # net.add(LinearLayer(152,10))
-    # net.add(TanhActivation(10))
+    net = Network(Error.half_squared_error, Error.half_squared_error_prime)
+    # net.add(LogisticLayer(784, 10))
+    net.add(LinearLayer(784, 100))
+    net.add(TanhActivation(100))
+    net.add(LinearLayer(100, 50))
+    net.add(TanhActivation(50))
+    net.add(LinearLayer(50, 10))
+    net.add(TanhActivation(10))
 
-    net.fit(train.data, train.targets, 100, 0.1)
+    net.fit(train.data[:1000], train.targets[:1000], 30, 0.1)
+    # net.fit(x_train, y_train, 1000, 0.1)
+    # evaluator = ModelEvaluator(net, test, 10)
+    # evaluator.plot_confusion_matrix()
