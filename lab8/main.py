@@ -133,6 +133,7 @@ if __name__ == '__main__':
     net.add(LinearLayer(152,10))
     net.add(SigmoidActivation(10))
 
-    net.fit(train.data, train.targets, 5, 0.001)
+    net.fit(train.data, train.targets, 1, 0.1)
     evaluator = ModelEvaluator(net, test, 10)
+    print("Accuracy: ", evaluator.acc)
     evaluator.plot_confusion_matrix()
