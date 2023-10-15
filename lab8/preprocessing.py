@@ -19,5 +19,5 @@ def load(path):
 
 if __name__=='__main__':
     labels, pixels = load('archive/mnist_test.csv')
-    test = Dataset(labels, pixels)
-    print(test.data[0])
+    # test = Dataset(labels, pixels)
+    # print(test.data[0])

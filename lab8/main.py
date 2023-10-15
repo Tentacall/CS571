@@ -1,10 +1,6 @@
 
 import numpy as np
-
-'''
-Input data shape -> NxA
-Layer shape -> AXB [ out NxB ]
-'''
+from math import e
 
 class LiniearLayer:
     def __init__(self, input_shape, output_shape) -> None:
@@ -18,8 +14,7 @@ class LiniearLayer:
     
     def _forward(self, data):
         self.input_data = data # [N,A]
-        self.output_data = np.dot(data, self.weight) + self.bias # [N,A].[A,B] + [1,B] = [N,B]
-        return self.output_data
+        return np.dot(data, self.weight) + self.bias # [N,A].[A,B] + [1,B] = [N,B]
     
     def _backward(self, loss, lr):
         #loss = [N,B]
@@ -38,24 +33,27 @@ class Activation:
         self.output_data = None
 
         self.activation = None
-        self.rev_activation = None
+        self.activation_prime = None
 
 
     def _forward(self, data):
         self.input_data = data
-        self.output_data = self.activation(self.input_data)
+        return self.activation(self.input_data)
 
     def _backward(self, loss, lr):
-        return self.rev_activation(self.input)*loss
+        return self.activation_prime(self.input)*loss
     
 class SigmoidActivation(Activation):
     def __init__(self, input_shape) -> None:
         super().__init__(input_shape)
         self.activation = self.sigmoid
-        self.rev_activation = self.rev_sigmoid
+        self.activation_prime = self.sigmoid_prime
 
     def sigmoid(self, data):
-        return 
+        return 1 / ( 1 + e**(-data))
+    
+    def sigmoid_prime(self, data):
+        return self.sigmoid(data)*(1-self.sigmoid(data))
     
 class TanhActivation(Activation):
     def __init__(self, input_shape) -> None:
@@ -63,42 +61,54 @@ class TanhActivation(Activation):
         self.activation = lambda x: np.tanh(x)
         self.rev_activation = lambda x: 1 - np.tanh(x)**2
 
-
 class Network:
-    def __init__(self, train_data, epoch, lr) -> None:
-        self.train_data, self.train_label = train_data
-        self.epoch = epoch
-        self.lr = lr
-        self.networks = []
+    def __init__(self, error, error_prime) -> None:
+        self.layers = []
+        self.error = error
+        self.error_prime = error_prime
 
     def add(self, layer):
-        self.network.append(layer)
+        self.layers.append(layer)
 
-    def loss(self, output):
-        return output - self.train_label
+    def fit(self, train_x, train_y, epoch, lr):
+        samples = len(train_x)
+        self.lr = lr
 
-    def fit(self):
-        for i in range(self.epoch):
-            print(f"[Epoch {i+1}]")
-            data = self.train_data
-            for network in self.networks:
-                data = network._forward(data)
-            
-            loss = self.loss(data)
-            for network in self.networks:
-                loss = network._backward(loss, self.lr)
-            
-            print(loss)
+        for i in range(epoch):
+            error = 0
+            for j in range(samples):
+                data = train_x[j]
+                for layer in self.layers:
+                    data = layer._forward(data)
+                
+                error += self.error(train_y,data)
+                loss = self.error_prime(train_y, data)
+                for layer in self.layers[::-1]:
+                    loss = layer._backward(loss, self.lr)
+            print(f"[Epoch {i+1}] loss = {error/samples}")
 
-    def predict(self, data):
-        for network in self.networks:
-            data = network._forward(data)
-        return data
+    def predict(self, data_x):
+        for layer in self.layers:
+            data_x = layer._forward(data_x)
+        return data_x
+    
+class Error:
+    @staticmethod
+    def mse_error(y_true, y_pred):
+        return np.mean(np.power(y_true-y_pred, 2))
+    
+    @staticmethod
+    def mse_error_prime(y_true, y_pred):
+        return 2*(y_pred-y_true)/y_true.size
+    
 
 if __name__ == '__main__':
-    train_data = None
-    net = Network(train_data=train_data, epoch = 10, lr = 0.01, )
-    net.add(LiniearLayer(train_data._shape, 10 ))
-    net.add(TanhActivation(10))
+    x_train = np.array([[[0,0]], [[0,1]], [[1,0]], [[1,1]]])
+    y_train = np.array([[[0]], [[1]], [[1]], [[0]]])
+    net = Network(Error.mse_error, Error.mse_error_prime)
+    net.add(LiniearLayer(2,3))
+    net.add(SigmoidActivation(3))
+    net.add(LiniearLayer(3,1))
+    net.add(SigmoidActivation(1))
 
-    net.fit()
+    net.fit(x_train, y_train, 100, 0.1)
