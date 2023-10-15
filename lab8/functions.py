@@ -8,14 +8,13 @@ class Evaluation_metrics:
         self.n_classes = n_classes
         
     def confusion_matrix(self):
-        self.conf_mat = np.zeros(self.n_classes, self.n_classes)
+        self.conf_mat = np.zeros([self.n_classes, self.n_classes])
         for i in range(len(self.y_pred)):
             self.conf_mat[self.y_truth[i]][self.y_pred[i]] += 1
             
         return self.conf_mat
         
     def accuracy(self):
-        self.confusion_matrix()
         self.acc = 0
         for i in range(self.n_classes):
             self.acc += self.conf_mat[i][i]
@@ -25,11 +24,6 @@ class Evaluation_metrics:
     def cross_entropy():
         pass
     
-    
-def sigmoid(X):
-    output = 1/(1+np.exp(-X))
-        
-    return output
 
 if __name__ == '__main__':
     from preprocessing import Dataset, load
@@ -37,5 +31,3 @@ if __name__ == '__main__':
     train = Dataset(labels, pixels)
     labels, pixels = load('archive/mnist_test.csv')
     test = Dataset(labels, pixels)
-    
-    print(sigmoid(train.data[0][10]))
