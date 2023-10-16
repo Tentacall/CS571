@@ -1,7 +1,7 @@
 from tqdm import trange
 import numpy as np
 from math import e
-from preprocessing import Dataset, mnist_loader
+from preprocessing import Dataset
 from functions import Evaluation_metrics
 
 class Layer:
@@ -167,15 +167,20 @@ class Error:
     
 
 if __name__ == '__main__':
-    ## using mnist loader
-    epochs = 100
+    epochs = 30
     learning_rate = 0.1
 
-    (x_train, y_train), (x_test, y_test) = mnist_loader()
-    x_train = x_train[:10000]
-    y_train = y_train[:10000]
+    # (x_train, y_train), (x_test, y_test) = mnist_loader()
+    train = Dataset('archive/mnist_train.csv')
+    test = Dataset('archive/mnist_test.csv')
+    x_train, y_train = train.data, train.targets
+    x_test, y_test = test.data, test.targets
+    # print(train_x.shape, train_y.shape)
+    # x_train = x_train[:10000]
+    # y_train = y_train[:10000]
     x_test = x_test[:1000]
     y_test = y_test[:1000]
+
     network = Network(Error.mse, Error.mse_prime)
     # network.add(FlattenLayer(input_shape=(28, 28)))
     network.add(LinearLayer(28 * 28, 10))
