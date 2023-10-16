@@ -2,6 +2,7 @@ from tqdm import trange
 import numpy as np
 from math import e
 from preprocessing import Dataset, mnist_loader
+from functions import Evaluation_metrics
 
 class Layer:
     def __init__(self, input_shape, output_shape) -> None:
@@ -129,16 +130,23 @@ class Network:
             error /= len(x_train)
             print('%d/%d, error=%f' % (epoch + 1, epochs, error))
 
-    def predict(self, input):
-        output = input
-        for layer in self.layers:
-            output = layer._forward(output)
-        return output
-
     def predict(self, data_x):
         for layer in self.layers:
             data_x = layer._forward(data_x)
         return data_x
+    
+    def evalute(self, x_test, y_test, n_classes):
+        print("Evaluating...")
+        y_pred = self.predict(x_test)
+        y_pred = np.argmax(y_pred, axis=1)
+        y_test = np.argmax(y_test, axis=1)
+        # print(y_pred[0], y_test[0])
+        evaluator = Evaluation_metrics(y_pred, y_test, n_classes)
+        conf_mat = evaluator.confusion_matrix()
+        acc = evaluator.accuracy()
+        print(f"Accuracy: {acc*100}%")
+        # print(f"Confusion Matrix: \n{conf_mat}")
+        return conf_mat, acc
     
 class Error:
     @staticmethod
@@ -171,7 +179,7 @@ if __name__ == '__main__':
     # evaluator.plot_confusion_matrix()
 
     ## using mnist loader
-    epochs = 10
+    epochs = 5
     learning_rate = 0.1
 
     (x_train, y_train), (x_test, y_test) = mnist_loader()
@@ -185,8 +193,15 @@ if __name__ == '__main__':
     network.add(SigmoidActivationLayer())
     network.fit(x_train, y_train, epochs, learning_rate)
 
+    conf_mat, acc = network.evalute(x_test, y_test, 10)
+    
+    ## plot confusion matrix
+    import matplotlib.pyplot as plt
+    plt.imshow(conf_mat, cmap='Blues')
+    plt.colorbar()        
+    plt.title('Confusion Matrix')
+    plt.xlabel('Predicted')
+    plt.ylabel('Actual')
+    plt.savefig('confusion_matrix.png')
 
-    ratio = sum([np.argmax(y) == np.argmax(network.predict(x)) for x, y in zip(x_test, y_test)]) / len(x_test)
-    error = sum([Error.mse(y, network.predict(x)) for x, y in zip(x_test, y_test)]) / len(x_test)
-    print('ratio: %.2f' % ratio)
-    print('mse: %.4f' % error)
+    
