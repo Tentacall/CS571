@@ -167,19 +167,8 @@ class Error:
     
 
 if __name__ == '__main__':
-    # x_train = np.array([[[0,0]], [[0,1]], [[1,0]], [[1,1]]])
-    # y_train = np.array([[[0]], [[1]], [[1]], [[0]]])
-    # from preprocessing import Dataset
-    # from evaluator import ModelEvaluator
-    # train = Dataset('archive/mnist_train.csv')
-    # test = Dataset('archive/mnist_test.csv')
-    
-    # evaluator = ModelEvaluator(net, test, 10)
-    # print("Accuracy: ", evaluator.acc)
-    # evaluator.plot_confusion_matrix()
-
     ## using mnist loader
-    epochs = 5
+    epochs = 100
     learning_rate = 0.1
 
     (x_train, y_train), (x_test, y_test) = mnist_loader()
@@ -196,7 +185,10 @@ if __name__ == '__main__':
     conf_mat, acc = network.evalute(x_test, y_test, 10)
     
     ## plot confusion matrix
+    import matplotlib
+    matplotlib.use('Agg')
     import matplotlib.pyplot as plt
+
     plt.imshow(conf_mat, cmap='Blues')
     plt.colorbar()        
     plt.title('Confusion Matrix')
