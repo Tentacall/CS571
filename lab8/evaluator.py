@@ -15,7 +15,8 @@ class ModelEvaluator:
         self.evaluator = Evaluation_metrics(self.y_pred, self.y_test, self.n_classes)
         self.conf_mat = self.evaluator.confusion_matrix()
         self.acc = self.evaluator.accuracy()
-        
+        print(f"Accuracy: {self.acc}")
+    
     def plot_confusion_matrix(self):
         plt.imshow(self.conf_mat, cmap='Blues')
         plt.colorbar()        
