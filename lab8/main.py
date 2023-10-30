@@ -26,13 +26,14 @@ class LinearLayer(Layer):
 
     def _forward(self, input):
         self.input = input
+        # print(input.shape, self.weights.shape, self.bias.shape)
         return np.dot(input, self.weights) + self.bias
 
     def _backward(self, output_error, learning_rate):
         input_error = np.dot(output_error, self.weights.T)
         weights_error = np.dot(self.input.T, output_error)
         # bias_error = output_error
-        
+        print(self.bias.shape, output_error.shape)
         self.weights -= learning_rate * weights_error
         self.bias -= learning_rate * output_error
         return input_error
@@ -91,7 +92,7 @@ class SigmoidActivationLayer(ActivationLayer):
 
     
 class TanhActivation(ActivationLayer):
-    def __init__(self, input_shape) -> None:
+    def __init__(self) -> None:
         self.__name__ = "Tanh"
         self.activation = lambda x: np.tanh(x)
         self.activation_prime = lambda x: 1 - np.tanh(x)**2
@@ -106,16 +107,16 @@ class Network:
     def add(self, layer):
         self.layers.append(layer)
 
-    def fit(self, x_train, y_train, epochs, lr):
-        samples = len(x_train)
+    def fit(self, x_train, y_train, epochs, lr, batch_size = 10):
+        samples = len(x_train)//batch_size
         self.lr = lr
 
         for epoch in range(epochs):
             error = 0
             for j in trange(samples):
                 # forward
-                output = x_train[j].reshape(1, -1)
-                y_true = y_train[j]
+                output = x_train[j*batch_size: (j+1)*batch_size]
+                y_true = y_train[j*batch_size: (j+1)*batch_size]
                 for layer in self.layers:
                     output = layer._forward(output)
                 
@@ -124,6 +125,9 @@ class Network:
 
                 # backward
                 output_error = self.error_prime(y_true, output)
+                output_error = np.mean(output_error, axis= 0, keepdims=True)
+                
+                print(output.shape, y_true.shape, output_error.shape)
                 for layer in reversed(self.layers):
                     output_error = layer._backward(output_error, lr)
     
@@ -167,24 +171,26 @@ class Error:
     
 
 if __name__ == '__main__':
-    epochs = 30
+    epochs = 1
     learning_rate = 0.1
 
     # (x_train, y_train), (x_test, y_test) = mnist_loader()
-    train = Dataset('archive/mnist_train.csv')
-    test = Dataset('archive/mnist_test.csv')
+    train = Dataset('archive-fashion/fashion-mnist_train.csv')
+    test = Dataset('archive-fashion/fashion-mnist_test.csv')
     x_train, y_train = train.data, train.targets
     x_test, y_test = test.data, test.targets
     # print(train_x.shape, train_y.shape)
-    # x_train = x_train[:10000]
-    # y_train = y_train[:10000]
-    x_test = x_test[:1000]
-    y_test = y_test[:1000]
+    x_train = x_train[:1000]
+    y_train = y_train[:1000]
+    x_test = x_test[:100]
+    y_test = y_test[:100]
 
     network = Network(Error.mse, Error.mse_prime)
     # network.add(FlattenLayer(input_shape=(28, 28)))
     network.add(LinearLayer(28 * 28, 10))
     network.add(SigmoidActivationLayer())
+    # network.add(LinearLayer(100, 10))
+    # network.add(SigmoidActivationLayer())
     network.fit(x_train, y_train, epochs, learning_rate)
 
     conf_mat, acc = network.evalute(x_test, y_test, 10)
@@ -199,6 +205,6 @@ if __name__ == '__main__':
     plt.title('Confusion Matrix')
     plt.xlabel('Predicted')
     plt.ylabel('Actual')
-    plt.savefig('confusion_matrix.png')
+    plt.savefig('fashion-confusion_matrix.png')
 
     

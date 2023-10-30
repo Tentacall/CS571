@@ -4,4 +4,7 @@ papers
 */archive/*
 */archive.*
 
+*/archive-*/*
+*/archive-*.*
+
 tmp.py
