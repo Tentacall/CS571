@@ -3,8 +3,8 @@ profession(tailor).
 profession(smith).
 profession(carpenter).
 
-professions([(smith,Ps), (baker, Pb), (carpenter,Pc), (tailor, Pt)],
- [(son_of(smith),Pss), (son_of(baker),Pbs), (son_of(carpenter), Pcs), (son_of(tailor), Pts)]) :-
+professions([("Smith",Ps), ("Baker", Pb), ("Carpenter",Pc), ("Tailor", Pt)],
+ [(son_of("Smith"),Pss), (son_of("Baker"),Pbs), (son_of("Carpenter"), Pcs), (son_of("Tailor"), Pts)]) :-
   profession(Ps), profession(Pb), profession(Pc), profession(Pt),
   profession(Pss), profession(Pbs), profession(Pcs), profession(Pts),
   
