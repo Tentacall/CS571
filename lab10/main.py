@@ -97,6 +97,30 @@ class TanhActivation(ActivationLayer):
         self.activation_prime = lambda x: 1 - np.tanh(x)**2
         super().__init__(self.activation, self.activation_prime)
 
+class ReluActivation(ActivationLayer):
+    def __init__(self) -> None:
+        super().__init__(self.activation, self.activation_prime)
+
+    @staticmethod
+    def activation(x):
+        return np.maximum(0, x)
+    
+    @staticmethod
+    def activation_prime(x):
+        return np.where(x > 0, 1, 0)
+
+
+class LeakyReluActivation(ActivationLayer):
+    def __init__(self, alpha=0.01) -> None:
+        super().__init__(self.activation, self.activation_prime)
+        self.alpha = alpha
+
+    def activation(self, x):
+        return np.where(x > 0, x, self.alpha * x)
+    
+    def activation_prime(self, x):
+        return np.where(x > 0, 1, self.alpha)
+
 class Network:
     def __init__(self, error, error_prime) -> None:
         self.layers = []
