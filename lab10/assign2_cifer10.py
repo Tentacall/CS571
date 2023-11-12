@@ -6,9 +6,9 @@ def unpickle(file):
 
 
 def load_cifer10():
-    data = unpickle('cifar-10-python.tar.gz')
+    data = unpickle('cifar-10-batches-py/data_batch_1')
     print(data.keys())
-    print(data['label_names'])
+    print(data[b'labels'])
 
 if __name__ == '__main__':
     load_cifer10()

@@ -1,6 +1,4 @@
-% to run the code in SWI-Prolog, do
-%        ?- ['missionaries_and_cannibals.pl'].
-%        ?- find.
+% to run the code -> ?- find.
 
 % Represent a state as [CL,ML,B,CR,MR]
 start([3,3,left,0,0]).
