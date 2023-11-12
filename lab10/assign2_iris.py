@@ -48,16 +48,16 @@ def dataloader():
     #hot encode
 
 def main():
-    epochs = 500
+    epochs = 100
     learning_rate = 0.1
     x_train, y_train, x_test, y_test = dataloader()
 
     network = Network(Error.sse, Error.sse_prime)
-    network.add(LinearLayer(4, 10))
+    network.add(LinearLayer(4, 5))
     network.add(LeakyReluActivation())
-    network.add(LinearLayer(10, 10))
-    network.add(LeakyReluActivation())
-    network.add(LinearLayer(10, 3))
+    # network.add(LinearLayer(10, 10))
+    # network.add(LeakyReluActivation())
+    network.add(LinearLayer(5, 3))
     network.add(LeakyReluActivation())
 
     network.fit(x_train, y_train, epochs, learning_rate)
@@ -69,10 +69,13 @@ def main():
         conf_matrix[np.argmax(y_test[i])][np.argmax(predictions[i])] += 1
 
     print(conf_matrix)
-    # show confusion matrix
-    fig, ax = plt.subplots()
-    im = ax.imshow(conf_matrix)
-    plt.show()
+    # # show confusion matrix
+    # fig, ax = plt.subplots()
+    # im = ax.imshow(conf_matrix)
+    # plt.show()
+
+    acurecy = (conf_matrix[0][0] + conf_matrix[1][1] + conf_matrix[2][2])/len(predictions)
+    print(acurecy*100)
 
 if __name__ == '__main__':
     main()

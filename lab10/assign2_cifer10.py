@@ -11,16 +11,25 @@ if __name__ == '__main__':
     x_train, y_train = train.data, train.targets
     x_test, y_test = test.data, test.targets
     
+
+    # x_train, y_train = x_train[:1000], y_train[:1000]
     # metadata
-    epochs = 1
-    learning_rate = 0.01
+    epochs = 5
+    learning_rate = 0.1
     
     network = Network(Error.mse, Error.mse_prime)
-    network.add(LinearLayer(x_train.shape[1], 32))
-    network.add(TanhActivation())
-    network.add(LinearLayer(32, 10))
-    network.add(TanhActivation())
-    network.fit(x_train, y_train, epochs, learning_rate)
+    network.add(LinearLayer(x_train.shape[1], 1000))
+    network.add(LeakyReluActivation())
+
+    network.add(LinearLayer(1000, 500))
+    network.add(LeakyReluActivation())
+    # network.add(TanhActivation())
+    network.add(LinearLayer(500, 10))
+    network.add(LeakyReluActivation())
+    # network.add(TanhActivation())
+
+    network.fit(x_train[:1000], y_train[:1000], epochs, learning_rate)
+    # network.fit(x_train[1000:2000], y_train[1000:2000], epochs, 0.01)
 
     conf_mat, acc = network.evalute(x_test, y_test, 10)
     
