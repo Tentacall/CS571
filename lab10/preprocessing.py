@@ -1,6 +1,14 @@
 # from keras.utils import to_categorical
 import pandas as pd
 import numpy as np
+import os
+
+def unpickle(file):
+    import pickle
+    with open(file, 'rb') as fo:
+        data_dict = pickle.load(fo, encoding='bytes')
+    return data_dict
+    
 
 def to_categorical(y, num_classes=None, dtype="float32"):
     y = np.array(y, dtype="int")
@@ -21,44 +29,44 @@ def to_categorical(y, num_classes=None, dtype="float32"):
     return categorical
 
 class Dataset:
-    def __init__(self, filename) -> None:
-        labels, pixels = self.load(filename)
-        self.targets = np.array(labels)
+    def __init__(self, root_path, train: bool = True) -> None:
+        self.train = train
+        labels, pixels = self.load(root_path)
+        labels = np.array(labels)
+        pixels = np.array(pixels, dtype=np.float32)
         self.data = np.array(self.normalize(pixels))
-        self.targets = to_categorical(self.targets)
+        self.targets = to_categorical(labels)
         
     def get_item(self, indx):
         return self.data[indx], self.targets[indx]
                 
     def load(self, path):
-        df = pd.read_csv(path)
-        labels = df.iloc[:, 0]
-        pixels = df.iloc[:, 1:]
-        return labels, pixels
+        data = None
+        labels = None
+        start_with = 'data_batch' if self.train else 'test_batch'
+        for batch_file in os.scandir(path):
+            if batch_file.name.startswith(start_with):
+                data_dict = unpickle(batch_file.path)
+                if labels is None:
+                    data = data_dict[b'data']
+                    labels = data_dict[b'labels']
+                else:
+                    data = np.concatenate((data, data_dict[b'data']), axis=0)
+                    labels += data_dict[b'labels']
+                
+        return labels, data
     
     def normalize(self, x):
         x /= 255
         return x
 
-def mnist_loader() :
-    from keras.datasets import mnist
 
-    (x_train, y_train), (x_test, y_test) = mnist.load_data()
-
-    x_train = x_train.astype('float32')
-    x_train /= 255
-    y_train = to_categorical(y_train)
-    x_train = np.reshape(x_train, (x_train.shape[0], -1))
-    y_train = y_train
-
-    x_test = x_test.astype('float32')
-    x_test /= 255
-    x_test = np.reshape(x_test, (x_test.shape[0], -1))
-    y_test = to_categorical(y_test)
-    return (x_train, y_train), (x_test, y_test)
 
 if __name__=='__main__':
     
-    test = Dataset('archive/mnist_test.csv')
-    print(test.data[0][10])
-    print(test.targets[0])
+    train = Dataset('cifar10', train=True)
+    print(train.data.shape)
+    print(train.targets.shape)
+    test = Dataset('cifar10', train=False)
+    print(test.data.shape)
+    print(test.targets.shape)
