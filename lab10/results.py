@@ -23,9 +23,8 @@ data = [
 
 # Create a Pandas DataFrame for better handling
 columns = ['Epochs', 'Num_Neurons', 'Accuracy']
-df = pd.DataFrame(leakyrelu_data, columns=columns)
-# columns = ['Num_Neurons', 'Epochs', 'Accuracy']
 # df = pd.DataFrame(leakyrelu_data, columns=columns)
+df = pd.DataFrame(data, columns=columns)
 
 # 3D Scatter plot
 fig = plt.figure()
@@ -39,8 +38,8 @@ ax.set_zlabel('Accuracy')
 
 # Show plot
 plt.show()
-# fig.savefig('iris_results_overall.png')
-fig.savefig('cifar_results_overall.png')
+fig.savefig('iris_results_overall.png')
+# fig.savefig('cifar_results_overall.png')
 
 # Plotting
 fig = plt.figure(figsize=(8, 6))
@@ -50,5 +49,5 @@ ax.set_title('Number of Neurons vs. Accuracy')
 ax.set_xlabel('Number of Neurons')
 ax.set_ylabel('Accuracy')
 plt.show()
-# fig.savefig('iris_results_num_nuerons.png')
-fig.savefig('cifar_results_num_nuerons.png')
+fig.savefig('iris_results_num_nuerons.png')
+# fig.savefig('cifar_results_num_nuerons.png')
